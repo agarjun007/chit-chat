@@ -29,8 +29,8 @@
 							<a href="#" class="trouble"><p>Forgot Password ?</p></a><div class="clear"> </div></div>
 							<a href="#" class="social-account"><h3>Login with your facebook or google account.</h3></a>
 								<ul class="bottom-sc-icons">
-								<li><a href="#" class="facebook"><img src="{% static 'chitchat_user/images/fb.png' %}" />Login with facebook</a></li>
-								<li><a href="#" class="google"><img src="{% static 'chitchat_user/images/google_icon.jpg' %}" />Login with google</a></li>
+								<li><a href="{% url 'social:begin' 'facebook' %}" class="facebook"><img src="{% static 'chitchat_user/images/fb.png' %}" />Login with facebook</a></li>
+								<li><a href="{% url 'social:begin' 'google-oauth2' %}" class="google"><img src="{% static 'chitchat_user/images/google_icon.jpg' %}" />Login with google</a></li>
 							</ul>
 							<div class="clear"> </div>
 				</div>

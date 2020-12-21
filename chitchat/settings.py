@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'social_django',
     'chitchat_user',
     'chitchat_admin'
 ]
@@ -50,6 +51,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'social_django.middleware.SocialAuthExceptionMiddleware',
 ]
 
 ROOT_URLCONF = 'chitchat.urls'
@@ -65,10 +67,17 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends',  
+                'social_django.context_processors.login_redirect', 
             ],
         },
     },
 ]
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.facebook.FacebookOAuth2',
+    'social_core.backends.google.GoogleOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)
 
 WSGI_APPLICATION = 'chitchat.wsgi.application'
 
@@ -78,8 +87,11 @@ WSGI_APPLICATION = 'chitchat.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'chitchat',
+        'USER' : 'postgres',
+        'PASSWORD': 'password',
+        'HOST' : 'localhost',
     }
 }
 
@@ -120,3 +132,14 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 STATIC_ROOT = os.path.join(BASE_DIR, 'assets')
+
+LOGIN_URL = 'user_login'
+LOGOUT_URL = 'user_logout'
+LOGIN_REDIRECT_URL = 'user_home'
+
+SOCIAL_AUTH_FACEBOOK_KEY = '318569505964654'  # App ID
+SOCIAL_AUTH_FACEBOOK_SECRET = '493304ede1b4aa471ff594065042235e'
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '704214217955-tc4sjd0crjvq2kinuv1siihqe7tb530h.apps.googleusercontent.com'  # App ID
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'xepk2oiI77T5PibpT6uTRJQq'
+
