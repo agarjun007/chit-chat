@@ -1,0 +1,75 @@
+{% extends 'chitchat_user/base_user.html' %}
+{% load static %}
+{% block heading %} Sign Up {% endblock %}
+
+		{% block body %}
+		<form method="POST">
+			{% csrf_token %}
+				<ul class="form">
+                    <li>
+                        <input type="text"  placeholder="First name" required=""/>
+                        </li>
+                        <li>
+                            <input type="text"  placeholder="Last name" required=""/>
+                            </li>
+                        <li>   
+                            <select class="dropdown" name="state" >
+                                <option >- State -</option>
+                                <option value="Kerala">Kerala</option>                                
+                               </select>    
+                            </li>     
+                        <li>   
+                                <select class="dropdown" name="district" >
+                                    <option >- District -</option>
+                                    <option value="Trivandrum">Trivandrum</option>
+                                    <option value="Ernakulam">Ernakulam</option>
+                                    <option value="Kozhikode">Kozhikode </option>    
+                                   </select>    
+                                </li>         
+					<li>
+					<input type="text"  placeholder="Username" required=""/>
+					</li>
+					<li>
+						<input type="password" class="password" placeholder="password" required=""/>
+                    </li>
+                   
+                    <li>
+                      
+                    <p style="color: white;">Open to Public chat:</p>
+  <input type="radio" id="yes" name="open_chat" value="yes" checked>
+  <label style="color: rgb(20, 170, 0);" for="yes">Yes</label><br>
+  <input type="radio" id="no" name="open_chat" value="no">
+  <label style="color: rgb(202, 34, 5);" for="no">No</label><br>
+
+</li> 
+					<div class="p-container">
+								
+								<button type="submit" class="hvr-bounce-to-bottom">Sign Up</button> 								 
+								</form>
+							<div class="clear"> </div>
+					</div>
+				</ul>
+				<div class="social-icons">
+							<div class="but-bottom">
+					<div class="p-container">
+						<span style="color: red;" id="invalid"></span>
+						
+								<!-- <label class="checkbox"><input type="checkbox" name="checkbox" checked><i></i>Remember Me</label> -->
+					</div>
+							<!-- <a href="#" class="trouble"><p>Forgot Password ?</p></a><div class="clear"> </div></div>
+							<a href="#" class="social-account"><h3>Login with your facebook or twitter account.</h3></a>
+								<ul class="bottom-sc-icons">
+								<li><a href="#" class="facebook"><img src="{% static 'chitchat_user/images/fb.png' %}" />Login with facebook</a></li>
+								<li><a href="#" class="twitter"><img src="{% static 'chitchat_user/images/tw.png' %}" />Login with twitter</a></li>
+							</ul>
+							<div class="clear"> </div> -->
+				</div>
+				<div class="sign-up">
+					<a href="#" class="sign-left">Want new account ?</a>
+					<a  class="signup play-icon popup-with-zoom-anim" href="/user-registration/">Sign Up</a>
+
+		</div>
+
+					<div class="clear"> </div>
+	{% endblock %}
+				

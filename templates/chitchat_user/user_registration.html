@@ -1,0 +1,50 @@
+{% extends 'chitchat_user/base_user.html' %}
+{% load static %}
+{% block heading %} Registration {% endblock %}
+
+		{% block body %}
+		
+		{% if otp_field == 1 %}
+		<form method="POST">
+			{% csrf_token %}
+				<ul class="form">
+					<li>
+					<input type="text" class="email" placeholder="Enter OTP" required=""/>
+					</li>
+					<div class="p-container">
+								
+						<button type="submit" class="hvr-bounce-to-bottom">Verify OTP</button> 								 
+					</form>
+							<div class="clear"> </div>
+					</div>
+				</ul>
+		{% else %}
+		<form method="POST">
+			{% csrf_token %}
+				<ul class="form">
+					<li>
+					<input type="text" class="email" placeholder="Mobile Number" required=""/>
+					</li>
+					<div class="p-container">
+								
+						<button type="submit" class="hvr-bounce-to-bottom">Request OTP</button> 								 
+					</form>
+							<div class="clear"> </div>
+					</div>
+				</ul>
+				{% endif %}
+				<div class="social-icons">
+							<div class="but-bottom">
+					<div class="p-container">
+						<span style="color: red;" id="invalid"></span>
+						
+								<!-- <label class="checkbox"><input type="checkbox" name="checkbox" checked><i></i>Remember Me</label> -->
+					</div>
+						
+				</div>
+				<div class="sign-up">
+					<a href="#" class="sign-left">Already have an account ?</a>
+					<a  class="signup play-icon popup-with-zoom-anim" href="/">Sign In</a>
+					
+	{% endblock %}
+				

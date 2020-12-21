@@ -1,0 +1,47 @@
+
+<!DOCTYPE html>
+<html>	
+<head>
+<title>cHit-chaT</title>
+{% load static %}
+<link rel="icon" href="{% static 'chitchat_user/images/chit-chat_logo.png' %}" type="image/icon type">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
+<meta name="keywords" content="Bootstrap Responsive Templates, Iphone Compatible Templates, Smartphone Compatible Templates, Ipad Compatible Templates, Flat Responsive Templates"/>
+<link href="{% static 'chitchat_user/css/style.css' %}" rel='stylesheet' type='text/css' />
+<!--webfonts-->
+<link href='http://fonts.googleapis.com/css?family=Ubuntu+Condensed' rel='stylesheet' type='text/css'>
+<!--//webfonts-->
+<script type="text/javascript" src="{% static 'chitchat_user/js/jquery-1.11.0.min.js' %}"></script>
+<script src="{% static 'chitchat_user/js/jquery.min.js' %}"></script>
+</head>
+<body>
+<!-- <script>$(document).ready(function(c) {
+	$('.logo').on('click', function(c){
+		$('.login-form').fadeOut('slow', function(c){
+	  		$('.login-form').remove();
+		});
+	});	  
+});
+</script> -->
+ <!--SIGN UP-->
+
+		<div class="login-form">
+			<div class="logo">  <img  src="{% static 'chitchat_user/images/chit-chat_logo2.png'%}" alt="">
+			</div>
+					<div class="head-info">
+						<h1><span>cHit</span>-<span>chaT</span> </h1>						
+						<h2>{% block heading %} {% endblock %}</h2>
+					</div>
+						<!-- <div class="strip">
+					</div> -->
+                    {% block body %} {% endblock %}
+
+		</div>
+
+				
+ <!--/SIGN UP-->
+ 
+		
+</body>
+</html>
