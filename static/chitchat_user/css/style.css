@@ -36,7 +36,7 @@ body{
 	margin: 0 auto;
 	width: 80%;
 }
-body a,form li,input[type="submit"],input[type="text"],.dropdown,.sixth-login input[type="submit"],.third-login input[type="submit"]{
+body a,form li,input[type="text"],.dropdown,.sixth-login,.third-login {
 	transition: 0.1s all;
 	-webkit-transition: 0.1s all;
 	-moz-transition: 0.1s all;
@@ -44,7 +44,7 @@ body a,form li,input[type="submit"],input[type="text"],.dropdown,.sixth-login in
 }
 /*--logo--*/
 .logo{
-	/* background: url('../images/chit-chat_logo.png') no-repeat 0px 0px; */
+	
 	/* cursor: pointer; */
 	width: 64px;
 	height: 65px;
@@ -597,7 +597,7 @@ a.signup:hover{
 		margin: 0 2px;
 	}
 	.logo {
-		background: url('../images/chit-chat_logo.png') no-repeat 15px 0px;
+		
 		height: 49px;
 		right: 0px;
 		background-size: 74%;

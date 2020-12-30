@@ -3,21 +3,22 @@
 {% block heading %} Sign In {% endblock %}
 
 		{% block body %}
-		<form method="POST">
+		<form id="login_form" >
 			{% csrf_token %}
 				<ul class="form">
 					<li>
-					<input type="text" class="email" placeholder="User name" required=""/>
+					<input type="text" id="username" name="username" class="username" placeholder="User name" required=""/>
 					</li>
 					<li>
-						<input type="password" class="password" placeholder="password" required=""/>
+						<input type="password" id="password" name="password" class="password" placeholder="password" required=""/>
 					</li>
 					<div class="p-container">
 								
-								<button type="submit" class="hvr-bounce-to-bottom">LOGIN</button> 								 
-								</form>
+								<button id="submit_btn" type="button" class="hvr-bounce-to-bottom">LOGIN</button> 								 
+								
 							<div class="clear"> </div>
 					</div>
+				</form>
 				</ul>
 				<div class="social-icons">
 							<div class="but-bottom">
@@ -29,7 +30,7 @@
 							<a href="#" class="trouble"><p>Forgot Password ?</p></a><div class="clear"> </div></div>
 							<a href="#" class="social-account"><h3>Login with your facebook or google account.</h3></a>
 								<ul class="bottom-sc-icons">
-								<li><a href="{% url 'social:begin' 'facebook' %}" class="facebook"><img src="{% static 'chitchat_user/images/fb.png' %}" />Login with facebook</a></li>
+								<li style="padding-bottom: 2rem;"><a href="{% url 'social:begin' 'facebook' %}" class="facebook"><img src="{% static 'chitchat_user/images/fb.png' %}" />Login with facebook</a></li>
 								<li><a href="{% url 'social:begin' 'google-oauth2' %}" class="google"><img src="{% static 'chitchat_user/images/google_icon.jpg' %}" />Login with google</a></li>
 							</ul>
 							<div class="clear"> </div>
@@ -42,4 +43,66 @@
 
 					<div class="clear"> </div>
 	{% endblock %}
-				
+
+	{% block script %}
+	
+  <script
+  src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+  integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
+  crossorigin="anonymous"
+></script>
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+    integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+    crossorigin="anonymous"
+  ></script>
+  
+  <script
+    src="https://code.jquery.com/jquery-3.5.0.min.js"
+    integrity="sha256-xNzN2a4ltkB44Mc/Jz3pT4iU1cmeR0FkXs4pru/JxaQ="
+    crossorigin="anonymous"
+  ></script>
+  
+  <script type="text/javascript">
+    $( document ).ready(function() {
+      $( "#submit_btn" ).click(function() {
+        var userData = {
+          csrfmiddlewaretoken: '{{ csrf_token }}',
+          username: $('#username').val(),
+          password: $('#password').val()
+        }
+      if (userData.username === '')
+     {
+      $('#invalid').html('please enter username')
+     }
+          
+     else if (userData.password === '')
+     {
+      $('#invalid').html('please enter password')
+     }
+     else{
+        $.ajax({
+            url : '/',
+            type: "POST",
+            data : userData,
+            dataType : "json",
+            success: function( data ){
+              if(data == 'valid')
+                window.location.replace("/user-home")
+              if (data == 'blocked') { 
+                $('#invalid').html('Account Blocked')
+                $('#password').val('')
+                }
+              if(data == 'invalid'){
+                $('#invalid').html('invalid Username/Password')
+                $('#password').val('')
+              }
+            }
+        });
+     }
+      });
+     
+    });
+  </script>
+	{% endblock %}

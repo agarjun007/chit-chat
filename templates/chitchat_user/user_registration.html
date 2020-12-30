@@ -5,29 +5,29 @@
 		{% block body %}
 		
 		{% if otp_field == 1 %}
-		<form method="POST">
+		<form >
 			{% csrf_token %}
 				<ul class="form">
 					<li>
-					<input type="text" class="email" placeholder="Enter OTP" required=""/>
+					<input type="text" id="otp" name="otp" class="otp" placeholder="Enter OTP" required=""/>
 					</li>
 					<div class="p-container">
 								
-						<button type="submit" class="hvr-bounce-to-bottom">Verify OTP</button> 								 
+						<button id="verify_btn" type="button" class="hvr-bounce-to-bottom">Verify OTP</button> 								 
 					</form>
 							<div class="clear"> </div>
 					</div>
 				</ul>
 		{% else %}
-		<form method="POST">
+		<form >
 			{% csrf_token %}
 				<ul class="form">
 					<li>
-					<input type="text" class="email" placeholder="Mobile Number" required=""/>
+					<input type="text" id="mobile" name="mobile" class="mobile" placeholder="Mobile Number" required=""/>
 					</li>
 					<div class="p-container">
 								
-						<button type="submit" class="hvr-bounce-to-bottom">Request OTP</button> 								 
+						<button type="button" id="otp_btn" class="hvr-bounce-to-bottom">Request OTP</button> 								 
 					</form>
 							<div class="clear"> </div>
 					</div>
@@ -46,5 +46,104 @@
 					<a href="#" class="sign-left">Already have an account ?</a>
 					<a  class="signup play-icon popup-with-zoom-anim" href="/">Sign In</a>
 					
+	{% endblock %}
+
+	{% block script %}
+	
+  <script
+  src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+  integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
+  crossorigin="anonymous"
+></script>
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+    integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+    crossorigin="anonymous"
+  ></script>
+  
+  <script
+    src="https://code.jquery.com/jquery-3.5.0.min.js"
+    integrity="sha256-xNzN2a4ltkB44Mc/Jz3pT4iU1cmeR0FkXs4pru/JxaQ="
+    crossorigin="anonymous"
+  ></script>
+  
+  <script type="text/javascript">
+    $( document ).ready(function() {
+      $( "#otp_btn" ).click(function() {
+        var userData = {
+          csrfmiddlewaretoken: '{{ csrf_token }}',
+          mobile: $('#mobile').val(),
+          }
+      if (userData.mobile === '')
+     {
+      $('#invalid').html('please enter Mobile number')
+	 }
+	       
+     else{
+        $.ajax({
+            url : '/user-registration/',
+            type: "POST",
+            data : userData,
+            dataType : "json",
+            success: function( data ){
+              if(data == 'valid')
+                window.location.replace("/verify-otp")
+              if (data == 'exists') { 
+                $('#invalid').html('Account already exists.Please Signin')
+                }
+            //   if(data == 'invalid'){
+            //     $('#invalid').html('invalid Username/Password')
+            //     $('#mobile').val('')
+            //   }
+            }
+        });
+     }
+      });
+     
+    });
+  </script>
+
+<script type="text/javascript">
+
+//verify-otp
+
+    $( document ).ready(function() {
+      $( "#verify_btn" ).click(function() {
+        var userData = {
+          csrfmiddlewaretoken: '{{ csrf_token }}',
+          otp: $('#otp').val(),
+          }
+      if (userData.otp === '')
+     {
+      $('#invalid').html('please enter Otp number')
+	 }
+	       
+     else{
+        $.ajax({
+            url : '/verify-otp/',
+            type: "POST",
+            data : userData,
+            dataType : "json",
+            success: function( data ){
+              if(data == 'valid')
+                window.location.replace("/user-signup")
+              if (data == 'otp_mismatch') { 
+                $('#invalid').html('Please enter correct otp number')
+                }
+            //   if(data == 'invalid'){
+            //     $('#invalid').html('invalid Username/Password')
+            //     $('#mobile').val('')
+            //   }
+            }
+        });
+     }
+      });
+     
+    });
+  </script>
+  
+
+
 	{% endblock %}
 				
