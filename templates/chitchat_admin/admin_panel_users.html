@@ -58,8 +58,11 @@
                         <td>
                            <!-- <a href="/edit_user/{{x.id}}" class="edit" title="Edit" data-toggle="tooltip"><i  class="material-icons">&#xE254;</i></a> -->
                             <a href="/delete-user/{{user_id}}" class="delete" title="Delete" data-toggle="tooltip"><i style="color:red" Onclick= "return confirm('Are you sure you want to delete {{user_data.0.first_name}} ?')" class="material-icons ">&#xE872;</i></a>
-                            <a href="/block-user/{{user_id}}" id="block" class="block" title="Block" data-toggle="tooltip"><i style="color: rgb(105, 18, 18);" Onclick= "return confirm('Are you sure you want to continue?')" class="material-icons" >do_not_disturb </i></a>
-
+                            {% if user_data.0.is_active == 1%}
+                            <a href="/block-user/{{user_id}}" id="block" class="block" title="Block" data-toggle="tooltip"><i style="color: rgb(105, 18, 18);" Onclick= "return confirm('Are you sure you want to Block {{user_data.0.first_name}}?')" class="material-icons" >do_not_disturb </i></a>
+                            {%else%}
+                            <a href="/block-user/{{user_id}}"id="unblock" class="Unblock" title="UnBlock" data-toggle="tooltip"><i style="color: rgb(13, 121, 36);" Onclick= "return confirm('Are you sure you want to UnBlock {{user_data.0.first_name}}?')" class="material-icons" >do_not_disturb </i></a>
+                            {% endif %}
                         </td>
                     </tr>
                        {% endfor %}  
@@ -93,9 +96,7 @@
      $('#myTable').DataTable();
     
  } );
- function block(){
-    return confirm('Are you sure you want to continue {{x.first_name}} ?')
-         console.log('clicked')
-     }
+
+
     </script>
 {%endblock%}

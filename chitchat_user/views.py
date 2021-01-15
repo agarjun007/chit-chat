@@ -6,7 +6,14 @@ from django.contrib.auth.hashers import check_password
 import requests
 import json
 from .models import *
-
+from django.utils.safestring import mark_safe
+from django.contrib.auth.decorators import login_required
+import base64
+from django.core.files.base import ContentFile
+from django.core.files.storage import FileSystemStorage
+from PIL import Image
+from django.core.files import File
+import datetime
 
 def user_login(request):
     if request.user.is_authenticated:
@@ -15,11 +22,11 @@ def user_login(request):
         username = request.POST['username']
         password = request.POST['password']
         user = User.objects.filter(username=username).first()
-        if user is not None  and check_password(password,user.password):
+        if user is not None and check_password(password, user.password):
             if user.is_active == False:
                 return JsonResponse('blocked', safe=False)
             else:
-                auth.login(request, user)
+                auth.login(request, user, backend='django.contrib.auth.backends.ModelBackend')
                 return JsonResponse('valid', safe=False)
         else:
             return JsonResponse('invalid', safe=False)
@@ -81,7 +88,7 @@ def verify_otp(request):
             otp_id = request.session['id']
 
             url = "https://d7networks.com/api/verifier/verify"
-            
+
             payload = {'otp_id': otp_id,
                        'otp_code': otp}
             files = [
@@ -152,3 +159,52 @@ def user_home(request):
         return render(request, 'chitchat_user/user_home.html')
     else:
         return redirect(user_login)
+
+@login_required
+def room(request, room_name):
+    return render(request, 'chitchat_user/chat_room_trial.html', 
+                {'room_name_json': mark_safe(json.dumps(room_name)),
+                'username': mark_safe(json.dumps(request.user.username)),
+    })
+def user_profile(request):
+    user_details = UserDetails.objects.get(user=request.user)
+    content ={'user_details':user_details}
+    
+    return render(request,'chitchat_user/user_profile.html',content)
+
+def edit_profile(request):
+    user_details = UserDetails.objects.get(user=request.user)
+    dob = user_details.dob.strftime('%Y-%m-%d')
+    context={'user_details':user_details,'dob':dob}
+    return render(request,'chitchat_user/user_profile_edit.html',context)   
+
+def update_profile(request):
+    if request.user.is_authenticated:
+        user  = request.user
+        if request.method == 'POST':
+            user_details = UserDetails.objects.get(user=user)
+            user.first_name =  request.POST['first_name']
+            user.last_name = request.POST['last_name']
+            user_details.phone = request.POST['phone']  
+            user_details.dob = request.POST['dob']
+            user_details.state = request.POST['state']
+            user_details.disrict = request.POST['district']
+            user_details.martial_status = request.POST['martialstatus']
+            user_details.status = request.POST['status']
+            user_details.bio = request.POST['bio']   
+
+            if 'profile-image-upload' not in request.POST:
+                profile_picture = request.FILES.get('profile-image-upload')
+                print('not post',profile_picture)
+            else:
+                profile_picture = user_details.profile_picture     
+                print('post',profile_picture)
+
+            user_details.profile_picture = profile_picture
+            user.save()
+            user_details.save()
+            return redirect(user_profile)
+        else:
+            return render(request,'chitchat_user/user_profile_edit.html')    
+    else:
+        return redirect(user_login)        
