@@ -15,6 +15,9 @@ class UserDetails(models.Model):
     martial_status = models.CharField(max_length=100,null=True,blank=True)
     bio = models.TextField(null=True, blank=True)
     status = models.CharField(max_length=500,null=True,blank=True)
+    show_propic = models.CharField(max_length=50,null=True,blank=True)
+    show_profile = models.CharField(max_length=50,null=True,blank=True)
+    show_mobile = models.CharField(max_length=50,null=True,blank=True)
 
     @property
     def ImageURL(self):

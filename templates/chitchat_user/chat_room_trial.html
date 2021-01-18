@@ -155,10 +155,10 @@
             <i class="fa fa-user-plus fa-fw" aria-hidden="true"></i>
             <span>Add contact</span>
           </button>
-          <button id="settings">
+        <a href="/user-settings/"><button id="settings">
             <i class="fa fa-cog fa-fw" aria-hidden="true"></i>
             <span>Settings</span>
-          </button>
+          </button></a>
         </div>
       </div>
       <div class="content">
@@ -171,7 +171,7 @@
             <i class="fa fa-instagram" aria-hidden="true"></i>
           </div>
         </div>
-        <div class="messages">
+        <div id="messages" class="messages">
           <ul id="chat-log">
             <!-- <li class="sent">
 					<img src="http://emilcarlsson.se/assets/mikeross.png" alt="" />
@@ -227,12 +227,11 @@
       chatSocket.onmessage = function(e){
         var data = JSON.parse(e.data);
         if (data['command'] === 'messages'){
-          for(let i=0;i<data['messages'].length;i++){
-            // typeImage = 'text'
+          console.log((data['messages'].length)-1)
+          for(let i=(data['messages'].length)-1 ; i>=0; i--){
             createMessage(data['messages'][i]);
           }
         }else if (data['command'] === 'new_message'){
-          // typeImage = 'text'
           createMessage(data['message']);
         }
 
@@ -255,13 +254,15 @@
             if (msg != '')  {
                 var messageInputDom = document.querySelector('#chat-message-input');
                 var message = messageInputDom.value;
-                typeImage  = 'text'
                 chatSocket.send(JSON.stringify({
                   'command':'new_message',
                   'message': message,
-                  'from': username
-
+                  'from': username,
+                  'msg_type':'text'
+                  
                 }));
+                
+
                 messageInputDom.value = '';
               }
             };
@@ -269,34 +270,30 @@
             upload.addEventListener('change', (e) => {
             console.log("***************************",e.target.files[0]);
             let item = e.target.files[0];
-             typeImage = item.type
-            console.log("arjun", type);
             const reader = new FileReader();
-            // reader.onload = (e) => {
-
-            //   var arrayBuf = e.target.result;
-            //       console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@", arrayBuf);
-            //       let array = new Uint8Array(arrayBuf)
-            //       console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$", array);
-            // }
-            if (item.type.includes('image')) {
+            reader.onload = (e) => {
+              var arrayBuf = e.target.result;
+                  console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@", arrayBuf);
+                  let array = new Uint8Array(arrayBuf)
+                  console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$", array);
+            }
+            // if (item.type.includes('image')) {
                     let blob = item;
                     console.log('SSSSS',blob.type)
-                    typeImage = blob.type 
-                    console.log('typeeeeee',typeImage);
-                    const objectURL = URL.createObjectURL(blob)
+                   const objectURL = URL.createObjectURL(blob)
                     console.log("blob data", objectURL);
                     // var imgTag = document.createElement('img');
                     // imgTag.src = 'objectURL'
-                   let img = document.getElementById("urlImage")
-                   console.log('imggggggggggggg', img);
-                   img.src = objectURL;
+                  //  let img = document.getElementById("urlImage")
+                  //  console.log('imggggggggggggg', img);
+                  //  img.src = objectURL;
 
                    reader.readAsDataURL(blob);
                     chatSocket.send(JSON.stringify({
                   'command':'new_message',
                   'message': objectURL,
-                  'from': username
+                  'from': username,
+                  'msg_type':blob.type
 
                 }));
 
@@ -341,7 +338,7 @@
                 //     // document.querySelector('#room-message').style.display = 'none';
                 //     // document.querySelector('#add-caption-input').focus();
 
-                }
+                // }
 
                 })
 
@@ -352,7 +349,6 @@
           }
 
         function createMessage(data){
-          console.log("dataaaaaaaaaaaaa", typeImage);
           // console.log("################", data);
           var author = data['author'];
           // var msgListTag = document.createElement('li');
@@ -364,11 +360,14 @@
           // if (typeImage != 'image/jpeg') {
           //   typeImage  = 'text'
           // }
-
-          console.log(typeImage)
+          // var chatWindow =document.getElementById('messgaes')
+          // var xH = document.getElementById("messgaes").scrollHeight;
+          // chatWindow.scrollTo(0,xH)  
+        
+          console.log(data['msg_type'])
           console.log(data.content)
-          if (typeImage === 'image/jpeg' ) {
-            console.log("IIIIIIIIIIIIIIIIIIImage", type);
+          if (data.msg_type === 'image/jpeg' ) {
+            console.log("IIIIIIIIIIIIIIIIIIImage", data.msg_type);
             var msgListTag = document.createElement('li');
             var imgTag = document.createElement('img');
             var imgmsgTag = document.createElement('img');
@@ -384,7 +383,7 @@
               msgListTag.className = 'sent';
             }
 
-          } else if(typeImage ==='text') {
+          } else if(data.msg_type ==='text') {
             var msgListTag = document.createElement('li');
             var imgTag = document.createElement('img');
             var pTag = document.createElement('p');
@@ -400,7 +399,43 @@
               msgListTag.className = 'sent';
             }
 
-          }
+          } else  if (data.msg_type === 'video/mp4' ) {
+            console.log("ViiIdeooooo", data.msg_type);
+            var msgListTag = document.createElement('li');
+            var imgTag = document.createElement('img');
+            var videomsgTag = document.createElement('video');
+            videomsgTag.id = 'videomsg';
+            videomsgTag.controls = true;
+            imgTag.src = 'http://emilcarlsson.se/assets/harveyspecter.png'
+            videomsgTag.src = data.content;
+            msgListTag.appendChild(imgTag);
+            msgListTag.appendChild(videomsgTag);            
+            document.querySelector('#chat-log').appendChild(msgListTag);
+            if(author === username) {
+            msgListTag.className = 'replies';
+            } else {
+              msgListTag.className = 'sent';
+            }
+
+          } else  if (data.msg_type === 'audio/mpeg' ) {
+            console.log("Audiieooooo", data.msg_type);
+            var msgListTag = document.createElement('li');
+            var imgTag = document.createElement('img');
+            var audiomsgTag = document.createElement('audio');
+            audiomsgTag.id = 'audiomsg';
+            audiomsgTag.controls = true;
+            imgTag.src = 'http://emilcarlsson.se/assets/harveyspecter.png'
+            audiomsgTag.src = data.content;
+            msgListTag.appendChild(imgTag);
+            msgListTag.appendChild(audiomsgTag);            
+            document.querySelector('#chat-log').appendChild(msgListTag);
+            if(author === username) {
+            msgListTag.className = 'replies';
+            } else {
+              msgListTag.className = 'sent';
+            }
+
+          } 
 
           // imgTag.src = 'http://emilcarlsson.se/assets/harveyspecter.png'
 
@@ -415,6 +450,5 @@
 
         };
     </script>
-    <img src="" id="urlImage" alt="404" />
   </body>
 </html>

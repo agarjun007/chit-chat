@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.hashers import check_password
 import requests
 import json
-from .models import *
+from .models import UserDetails,User,Message
 from django.utils.safestring import mark_safe
 from django.contrib.auth.decorators import login_required
 import base64
@@ -207,4 +207,29 @@ def update_profile(request):
         else:
             return render(request,'chitchat_user/user_profile_edit.html')    
     else:
-        return redirect(user_login)        
+        return redirect(user_login)     
+
+def user_settings(request):
+    if request.user.is_authenticated:
+        user_details = UserDetails.objects.get(user=request.user)
+        context = {'user_details':user_details}
+        if request.method == 'POST':
+            user_details.show_propic = request.POST['propic']
+            user_details.show_profile = request.POST['profile']
+            user_details.show_mobile = request.POST['mobile']
+            open_chat = request.POST['open_chat']
+          
+            if open_chat == 'yes':
+                user_details.open_chat = 1
+            else:
+                user_details.open_chat = 0    
+
+            user_details.save()
+            user_details = UserDetails.objects.get(user=request.user)
+            context = {'user_details':user_details}
+            return render(request,'chitchat_user/user_settings.html',context)
+        else:    
+            return render(request,'chitchat_user/user_settings.html',context)   
+    else:
+        return redirect(user_login)         
+          

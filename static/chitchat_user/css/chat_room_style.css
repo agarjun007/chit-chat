@@ -19,6 +19,18 @@
     margin-left: 25px;
 
   }
+  #videomsg{
+    height: 150px;
+    width: 200px;
+    border-radius: 0;
+    float: right;
+  }
+  #audiomsg{
+    height: 30px;
+    width: 200px;
+    border-radius: 0;
+    float: right;
+  }
   
   #frame {
     width: 95%;

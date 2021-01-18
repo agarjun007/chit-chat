@@ -1,0 +1,170 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile</title>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" integrity="sha512-HK5fgLBL+xu6dm/Ii3z4xhlSUyZgTT9tuc/hSrtw6uzJOvgRr2a9jyxxT1ely+B+xFAmJKVSTbpM/CuL7qxO8w==" crossorigin="anonymous" />    <link rel="stylesheet" href="{% static 'chitchat_user/css/user_profile_edit.css' %}">
+
+    <link rel="stylesheet" href="">
+</head>
+<body>
+    <div class="container">
+        <div class="row gutters">
+            <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div class="account-settings">
+                            <div class="user-profile">
+                                <div class="user-avatar">
+                                    {%if user_details.ImageURL == '' %}
+                            <img id="profile-image"  src="https://i.pinimg.com/originals/51/f6/fb/51f6fb256629fc755b8870c801092942.png" alt="" style="height: 200px; width: 150px; border-radius: 50%;"/><br>
+                            {% else %}
+                            <img id="profile-image"  src="{{user_details.ImageURL}}" alt="" style="height: 200px; width: 150px;border-radius: 50%;"/><br>
+                            {% endif %}
+                           </div>
+                                <h5 class="user-name">{{user_details.user.username}}</h5>
+                            </div>
+                        
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <form action="{% url 'user_settings' %}" method="post" >
+                            {% csrf_token %}
+                        <div class="row gutters">
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                <h4 class="mb-3 text-primary">Settings</h4>
+                            </div>
+                         <input type="text" id="propic-value" value="{{user_details.show_propic}}" hidden>
+                            <div class="col-xl-9 col-lg-9 col-md-9 col-sm-9 col-12">
+                                <div class="text-left">
+                                    <label for="propic">Show profile picture &nbsp;</label>
+                                    <input type="radio" id="propic_everyone" name="propic" checked value="Everyone">Everyone&nbsp;</input>
+                                    <input type="radio" id="propic_friends"  name="propic" value="Friends">Friends&nbsp;</input>
+                                    <input type="radio" id="propic_nobody"  name="propic" value="Nobody">Nobody&nbsp;</input>
+                                </div>
+                            </div>
+                           
+                            
+                        </div>
+                        <div class="row gutters">
+                            <input type="text" id="profile-value" value="{{user_details.show_profile}}" hidden>
+
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                <div class="text-left">
+                                    <label for="fullName">Share my Profile &nbsp;</label>
+                                    <input type="radio" id="profile_everyone" name="profile" value="Everyone" checked>Everyone&nbsp;</input>
+                                    <input type="radio" id="profile_friends" name="profile" value="Friends">Friends&nbsp;</input>
+                                    <input type="radio" id="profile_nobody" name="profile" value="Nobody">Nobody&nbsp;</input>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        <div class="row gutters">
+                            <input type="text" id="mobile-value" value="{{user_details.show_mobile}}" hidden>
+                            <div class="col-xl-7 col-lg-7 col-md-7 col-sm-7 col-12">
+                                <div class="text-left">
+                                    <label for="mobile">Share my Mobile number &nbsp;</label>
+                                    <input type="radio" id="mobile_everyone" name="mobile" value="Everyone" checked>Everyone&nbsp;</input>
+                                    <input type="radio" id="mobile_friends" name="mobile"value="Friends">Friends&nbsp;</input>
+                                    <input type="radio" id="mobile_nobody" name="mobile"value="Nobody">Nobody&nbsp;</input>
+                                </div>
+                            </div>
+                            
+                        </div>
+
+                        <div class="row gutters">
+                            
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                <div class="text-left">
+                                    <label for="public">Open to Public chat &nbsp;</label>
+                                    {%if user_details.open_chat == 1%}
+                                    <input type="radio" name="open_chat" value="yes"checked>Yes&nbsp;</input>
+                                    <input type="radio" name="open_chat"value="no">No&nbsp;</input>
+                                    {%else%}
+                                    <input type="radio" name="open_chat"value="yes">Yes&nbsp;</input>
+                                    <input type="radio" name="open_chat"checked value="no">No&nbsp;</input>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                        </div>
+                        
+                        <div class="row gutters">
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                <div class="text-right">
+                                    <button type="submit" id="submitbtn" name="submitbtn" class="btn btn-primary">Update</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+        <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+        integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+        crossorigin="anonymous"></script>
+      <script
+        src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+        integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
+        crossorigin="anonymous"></script>  
+  
+        <script>
+            var propicValue = $('#propic-value').val()
+            console.log(propicValue);
+            if(propicValue === 'Everyone' ){
+            document.getElementById("propic_everyone").checked = true;
+
+            }
+            else if(propicValue === 'Friends' ){
+            document.getElementById("propic_friends").checked = true;
+
+            }
+            else if(propicValue === 'nobody' ){
+            document.getElementById("propic_nobody").checked = true;
+
+            }
+
+            var profileValue = $('#profile-value').val()
+            console.log(profileValue);
+            if(profileValue === 'Everyone' ){
+            document.getElementById("profile_everyone").checked = true;
+
+            }
+            else if(profileValue === 'Friends' ){
+            document.getElementById("profile_friends").checked = true;
+
+            }
+            else if(profileValue === 'nobody' ){
+            document.getElementById("profile_nobody").checked = true;
+
+            }
+
+            var mobileValue = $('#mobile-value').val()
+            console.log(mobileValue);
+            if(mobileValue === 'Everyone' ){
+            document.getElementById("mobile_everyone").checked = true;
+
+            }
+            else if(mobileValue === 'Friends' ){
+            document.getElementById("mobile_friends").checked = true;
+
+            }
+            else if(mobileValue === 'nobody' ){
+            document.getElementById("mobile_nobody").checked = true;
+
+            }
+        </script>
+</body>
+</html>

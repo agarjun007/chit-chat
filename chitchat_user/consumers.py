@@ -22,25 +22,29 @@ class ChatConsumer(WebsocketConsumer):
         author = data['from']
         author_user = User.objects.filter(username = author)[0]
         message = Message.objects.create(author = author_user,content=data['message'])
+        print('typeeeeee',data['msg_type'])
+        msg_type = data['msg_type']
         content = {
             'command':'new_message',
-            'message':self.message_to_json(message)
+            'message':self.message_to_json(message,msg_type)
         }
         return self.send_chat_message(content)
 
 
     def messages_to_json(self, messages):
         result =[]
+        msg_type = 'text'
         for message in messages:
-            result.append(self.message_to_json(message))
+            result.append(self.message_to_json(message,msg_type))
         return result
 
 
-    def message_to_json(self,message):
+    def message_to_json(self,message,msg_type):
         return{
             'author': message.author.username,
             'content':message.content,
-            'timestamp': str(message.timestamp)
+            'timestamp': str(message.timestamp),
+            'msg_type' : msg_type
         }        
 
 
