@@ -214,6 +214,8 @@
         }
       var typeImage;
       let type;
+      let arjun;
+      let result;
       let arrayBuf;
       var roomName = {{room_name_json}};
       var username = {{username}};
@@ -269,18 +271,30 @@
             };
             upload = document.querySelector('#attachment')
             upload.addEventListener('change', (e) => {
+              e.preventDefault()
             console.log("***************************",e.target.files[0]);
             let item = e.target.files[0];
+            console.log("####",item);
+            let blob = item;
+              console.log('SSSSS',blob.type)
+
             const reader = new FileReader();
+            reader.readAsDataURL(blob)
             reader.onload = (e) => {
+              base64_data = e.target.result;
               arrayBuf = e.target.result;
-                  console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@", arrayBuf);
+              console.log("11111",arrayBuf);
+
                   // let array = new Uint8Array(arrayBuf)
                   // console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$", array);
+                  // arjun = array;
+                  //  result = reader.result
+                  // console.log("REsult.........", arjun);
+                  base64_value(base64_data)
+
             }
             // if (item.type.includes('image')arrayBuf) {
-                    let blob = item;
-                    console.log('SSSSS',blob.type)
+                  
                   //  const objectURL = URL.createObjectURL(blob)
                   //   console.log("blob data", objectURL);
                     // var imgTag = document.createElement('img');
@@ -289,14 +303,20 @@
                   //  console.log('imggggggggggggg', img);
                   //  img.src = objectURL;
                   // console.log(e.target.result);
-                  // reader.readAsDataURL(blob);
-                    chatSocket.send(JSON.stringify({
+                  const base64_value=(base64_data) => {
+                    console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@", base64_data);
+
+
+                  chatSocket.send(JSON.stringify({
                   'command':'new_message',
-                  'message': arrayBuf,
+                  'message': base64_data,
                   'from': username,
                   'msg_type':blob.type
 
                 }));
+                  }
+                 
+                 
               
 
 

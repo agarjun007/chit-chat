@@ -12,13 +12,13 @@ User = get_user_model()
 class ChatConsumer(WebsocketConsumer):
     
     def fetch_messages(self, data):
-        print('messageeeeqqqqe',data)
+        # print('messageeeeqqqqe',data)
         messages = Message.last_10_messages()
         content = {
             'command':'messages',
             'messages': self.messages_to_json(messages)
         }
-        print('contentttt',content)
+        # print('contentttt',content)
 
         self.send_message(content)
 
@@ -27,10 +27,10 @@ class ChatConsumer(WebsocketConsumer):
         print('typeeeeee',data['msg_type'])
         file_type = data['msg_type'][:5]
         print(file_type)
-        print('messageeeee',data)
+        # print('messageeeee',data)
         if file_type == 'image' or 'audio' or 'video':
             print('insideeee')
-            print(data['message'])
+            # print(data['message'])
             file_data = data['message']
             format, filestr = file_data.split(';base64,')
             ext = format.split('/')[-1]
