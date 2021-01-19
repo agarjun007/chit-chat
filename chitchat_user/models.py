@@ -31,6 +31,8 @@ class Message(models.Model):
     author = models.ForeignKey(User,related_name='author_message',on_delete=models.CASCADE)
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
+    file_uploaded = models.FileField(upload_to="video/",default="")
+    file_type = models.CharField(max_length=50,null=True,blank=True)
 
     def __str__(self):
         return self.author.username 

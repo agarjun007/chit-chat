@@ -214,6 +214,7 @@
         }
       var typeImage;
       let type;
+      let arrayBuf;
       var roomName = {{room_name_json}};
       var username = {{username}};
       var chatSocket = new ReconnectingWebSocket(
@@ -272,31 +273,31 @@
             let item = e.target.files[0];
             const reader = new FileReader();
             reader.onload = (e) => {
-              var arrayBuf = e.target.result;
+              arrayBuf = e.target.result;
                   console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@", arrayBuf);
-                  let array = new Uint8Array(arrayBuf)
-                  console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$", array);
+                  // let array = new Uint8Array(arrayBuf)
+                  // console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$", array);
             }
-            // if (item.type.includes('image')) {
+            // if (item.type.includes('image')arrayBuf) {
                     let blob = item;
                     console.log('SSSSS',blob.type)
-                   const objectURL = URL.createObjectURL(blob)
-                    console.log("blob data", objectURL);
+                  //  const objectURL = URL.createObjectURL(blob)
+                  //   console.log("blob data", objectURL);
                     // var imgTag = document.createElement('img');
                     // imgTag.src = 'objectURL'
                   //  let img = document.getElementById("urlImage")
                   //  console.log('imggggggggggggg', img);
                   //  img.src = objectURL;
-
-                   reader.readAsDataURL(blob);
+                  // console.log(e.target.result);
+                  // reader.readAsDataURL(blob);
                     chatSocket.send(JSON.stringify({
                   'command':'new_message',
-                  'message': objectURL,
+                  'message': arrayBuf,
                   'from': username,
                   'msg_type':blob.type
 
                 }));
-
+              
 
 
                 // let item = event.clipboardData.items[0];

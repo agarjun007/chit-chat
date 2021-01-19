@@ -3,7 +3,8 @@ from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
 from .models import Message
 from django.contrib.auth import get_user_model
-
+import base64
+from django.core.files.base import ContentFile
 
 User = get_user_model()
 
@@ -11,19 +12,44 @@ User = get_user_model()
 class ChatConsumer(WebsocketConsumer):
     
     def fetch_messages(self, data):
+        print('messageeeeqqqqe',data)
         messages = Message.last_10_messages()
         content = {
             'command':'messages',
             'messages': self.messages_to_json(messages)
         }
+        print('contentttt',content)
+
         self.send_message(content)
 
     def new_message(self, data):
         author = data['from']
-        author_user = User.objects.filter(username = author)[0]
-        message = Message.objects.create(author = author_user,content=data['message'])
         print('typeeeeee',data['msg_type'])
-        msg_type = data['msg_type']
+        file_type = data['msg_type'][:5]
+        print(file_type)
+        print('messageeeee',data)
+        if file_type == 'image' or 'audio' or 'video':
+            print('insideeee')
+            print(data['message'])
+            file_data = data['message']
+            format, filestr = file_data.split(';base64,')
+            ext = format.split('/')[-1]
+            print('formatttttt',ext)
+            file_decoded = ContentFile(base64.b64decode(filestr), name='temp.' + ext)
+            content_msg = ""
+            print('fileeeeeeee',file_decoded)
+            msg_type = file_type
+            author_user = User.objects.filter(username = author)[0]
+            message = Message.objects.create(author = author_user,content=content_msg,file_uploaded=file_decoded,file_type=file_type) 
+
+        else:
+            content_msg = data['message']
+            msg_type = data['msg_type']
+            author_user = User.objects.filter(username = author)[0]
+            message = Message.objects.create(author = author_user,content=content_msg,file_type=msg_type)   
+     
+        # print('base644444',data['message'])
+        # msg_type = data['msg_type']
         content = {
             'command':'new_message',
             'message':self.message_to_json(message,msg_type)
