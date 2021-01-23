@@ -65,15 +65,24 @@
       <div id="sidepanel">
         <div id="profile">
           <div class="wrap">
+            {% if user_details.ImageURL == "" %}
             <img
               id="profile-img"
-              src="http://emilcarlsson.se/assets/mikeross.png"
+              src="https://i.pinimg.com/originals/51/f6/fb/51f6fb256629fc755b8870c801092942.png"
               class="online"
               alt=""
             />
-            <p>Mike Ross</p>
+            {%else%}
+            <img
+              id="profile-img"
+              src="{{user_details.ImageURL}}"
+              class="online"
+              alt=""
+            />
+            {% endif %}
+            <p>{{user.username}}</p>
             <i class="fa fa-chevron-down expand-button" aria-hidden="true"></i>
-            <div id="status-options">
+            <!-- <div id="status-options">
               <ul>
                 <li id="status-online" class="active">
                   <span class="status-circle"></span>
@@ -92,7 +101,7 @@
                   <p>Offline</p>
                 </li>
               </ul>
-            </div>
+            </div> -->
             <div id="expanded">
               <label for="twitter"
                 ><i class="fa fa-facebook fa-fw" aria-hidden="true"></i
@@ -121,17 +130,23 @@
         </div>
         <div id="contacts">
           <ul>
+            {% for user_details in users_details %}
             <li class="contact">
               <div class="wrap">
                 <span class="contact-status online"></span>
-                <img src="http://emilcarlsson.se/assets/louislitt.png" alt="" />
+                {%if user_details.ImageURL == '' %}
+                <img src="https://i.pinimg.com/originals/51/f6/fb/51f6fb256629fc755b8870c801092942.png" alt="" />
+                {%else%}
+                <img src="{{user_details.ImageURL}}" alt="" />
+                {%endif%}
                 <div class="meta">
-                  <p class="name">{{username}}</p>
-                  <p class="preview">You just got LITT up, Mike.</p>
+                  <p class="name">{{user_details.user.username}}</p>
+                  <!-- <p class="preview">You just got LITT up, Mike.</p> -->
                 </div>
               </div>
             </li>
-            <li class="contact active">
+            {% endfor %}
+            <!-- <li class="contact active">
               <div class="wrap">
                 <span class="contact-status busy"></span>
                 <img
@@ -147,14 +162,14 @@
                   </p>
                 </div>
               </div>
-            </li>
+            </li> -->
           </ul>
         </div>
         <div id="bottom-bar">
-          <button id="addcontact">
+          <!-- <button id="addcontact">
             <i class="fa fa-user-plus fa-fw" aria-hidden="true"></i>
             <span>Add contact</span>
-          </button>
+          </button> -->
         <a href="/user-settings/"><button id="settings">
             <i class="fa fa-cog fa-fw" aria-hidden="true"></i>
             <span>Settings</span>
@@ -164,7 +179,7 @@
       <div class="content">
         <div class="contact-profile">
           <img src="http://emilcarlsson.se/assets/harveyspecter.png" alt="" />
-          <p>{{username}}</p>
+          <p>{{user.username}}</p>
           <div class="social-media">
             <i class="fa fa-facebook" aria-hidden="true"></i>
             <i class="fa fa-twitter" aria-hidden="true"></i>
@@ -381,13 +396,10 @@
           // if (typeImage != 'image/jpeg') {
           //   typeImage  = 'text'
           // }
-          // var chatWindow =document.getElementById('messgaes')
-          // var xH = document.getElementById("messgaes").scrollHeight;
-          // chatWindow.scrollTo(0,xH)  
         
           console.log(data['msg_type'])
           console.log(data.content)
-          if (data.msg_type === 'image/jpeg' ) {
+          if (data.msg_type === 'image' ) {
             console.log("IIIIIIIIIIIIIIIIIIImage", data.msg_type);
             var msgListTag = document.createElement('li');
             var imgTag = document.createElement('img');
@@ -420,7 +432,7 @@
               msgListTag.className = 'sent';
             }
 
-          } else  if (data.msg_type === 'video/mp4' ) {
+          } else  if (data.msg_type === 'video' ) {
             console.log("ViiIdeooooo", data.msg_type);
             var msgListTag = document.createElement('li');
             var imgTag = document.createElement('img');
@@ -438,7 +450,7 @@
               msgListTag.className = 'sent';
             }
 
-          } else  if (data.msg_type === 'audio/mpeg' ) {
+          } else  if (data.msg_type === 'audio' ) {
             console.log("Audiieooooo", data.msg_type);
             var msgListTag = document.createElement('li');
             var imgTag = document.createElement('img');
@@ -468,6 +480,9 @@
             // msgListTag.appendChild(imgTag);
             // msgListTag.appendChild(pTag);
             // document.querySelector('#chat-log').appendChild(msgListTag);
+          var chatWindow =document.getElementById('messages')
+          var xH = document.getElementById("messages").scrollHeight;
+          chatWindow.scrollTo(0,xH)  
 
         };
     </script>

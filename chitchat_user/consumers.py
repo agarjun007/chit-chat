@@ -28,7 +28,7 @@ class ChatConsumer(WebsocketConsumer):
         file_type = data['msg_type'][:5]
         print(file_type)
         # print('messageeeee',data)
-        if file_type == 'image' or 'audio' or 'video':
+        if file_type == 'image' or file_type == 'audio' or file_type == 'video':
             print('insideeee')
             # print(data['message'])
             file_data = data['message']
@@ -52,26 +52,34 @@ class ChatConsumer(WebsocketConsumer):
         # msg_type = data['msg_type']
         content = {
             'command':'new_message',
-            'message':self.message_to_json(message,msg_type)
+            'message':self.message_to_json(message)
         }
         return self.send_chat_message(content)
 
 
     def messages_to_json(self, messages):
         result =[]
-        msg_type = 'text'
         for message in messages:
-            result.append(self.message_to_json(message,msg_type))
+            result.append(self.message_to_json(message))
         return result
 
 
-    def message_to_json(self,message,msg_type):
-        return{
+    def message_to_json(self,message):
+        if message.content == "":
+            return{
+                'author': message.author.username,
+                'content':message.file_uploaded.url,
+                'timestamp': str(message.timestamp),
+                'msg_type' : message.file_type
+            }
+        else:
+            return{
             'author': message.author.username,
             'content':message.content,
             'timestamp': str(message.timestamp),
-            'msg_type' : msg_type
-        }        
+            'msg_type' : message.file_type
+        }
+                    
 
 
     commands = {
@@ -82,7 +90,11 @@ class ChatConsumer(WebsocketConsumer):
     def connect(self):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
         self.room_group_name = 'chat_%s' % self.room_name
-
+        # print(self.channel_name)
+        # print('layer...',self.channel_layer)
+        # print('groupname....',self.room_group_name)
+        # print(self.room_name)
+        # print(self.scope["user"])
         # Join room group
         async_to_sync(self.channel_layer.group_add)(
             self.room_group_name,
@@ -110,6 +122,7 @@ class ChatConsumer(WebsocketConsumer):
             {
                 'type': 'chat_message',
                 'message': message
+                
             }
         )
 

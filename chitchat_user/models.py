@@ -33,8 +33,22 @@ class Message(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     file_uploaded = models.FileField(upload_to="video/",default="")
     file_type = models.CharField(max_length=50,null=True,blank=True)
+    room_name = models.CharField(max_length=100,null=True,blank=True)
+
+    @property
+    def File_URL(self):
+        try:
+            url = self.file_uploaded.url
+        except:
+            url = ''
+        return url
 
     def __str__(self):
         return self.author.username 
     def last_10_messages():
         return Message.objects.order_by('-timestamp').all()[:10]        
+
+class OneToOneChat(models.Model):
+    user_1 = models.CharField(max_length=100,null=True,blank=True)     
+    user_2 = models.CharField(max_length=100,null=True,blank=True)
+    room_name = models.CharField(max_length=100,null=True,blank=True)

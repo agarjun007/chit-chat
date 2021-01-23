@@ -14,6 +14,7 @@ from django.core.files.storage import FileSystemStorage
 from PIL import Image
 from django.core.files import File
 import datetime
+from django.db.models import Q
 
 def user_login(request):
     if request.user.is_authenticated:
@@ -162,9 +163,15 @@ def user_home(request):
 
 @login_required
 def room(request, room_name):
+    users = User.objects.all()
+    user_details = UserDetails.objects.get(user=request.user)
+    users_details = UserDetails.objects.filter(~Q(user = request.user))
     return render(request, 'chitchat_user/chat_room_trial.html', 
                 {'room_name_json': mark_safe(json.dumps(room_name)),
                 'username': mark_safe(json.dumps(request.user.username)),
+                'users':users,
+                'user_details':user_details,
+                'users_details':users_details
     })
 def user_profile(request):
     user_details = UserDetails.objects.get(user=request.user)
@@ -233,3 +240,6 @@ def user_settings(request):
     else:
         return redirect(user_login)         
           
+def peer_chat(request):
+    if request.user.is_authenticated:
+        pass
