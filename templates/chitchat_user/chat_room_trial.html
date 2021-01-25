@@ -65,7 +65,8 @@
       <div id="sidepanel">
         <div id="profile">
           <div class="wrap">
-            {% if user_details.ImageURL == "" %}
+           
+            {% if user_details.ImageURL == "" or status == 'new' %}
             <img
               id="profile-img"
               src="https://i.pinimg.com/originals/51/f6/fb/51f6fb256629fc755b8870c801092942.png"
@@ -131,13 +132,13 @@
         <div id="contacts">
           <ul>
             {% for user_details in users_details %}
-            <li class="contact">
+            <li id="contact{{user_details.id}}" onclick="chat('{{user_details.id}}')" class="contact">
               <div class="wrap">
                 <span class="contact-status online"></span>
                 {%if user_details.ImageURL == '' %}
-                <img src="https://i.pinimg.com/originals/51/f6/fb/51f6fb256629fc755b8870c801092942.png" alt="" />
+                <img id="propic{{user_details.id}}" src="https://i.pinimg.com/originals/51/f6/fb/51f6fb256629fc755b8870c801092942.png" alt="" />
                 {%else%}
-                <img src="{{user_details.ImageURL}}" alt="" />
+                <img id="propic{{user_details.id}}"  src="{{user_details.ImageURL}}" alt="" />
                 {%endif%}
                 <div class="meta">
                   <p class="name">{{user_details.user.username}}</p>
@@ -164,6 +165,7 @@
               </div>
             </li> -->
           </ul>
+          
         </div>
         <div id="bottom-bar">
           <!-- <button id="addcontact">
@@ -179,7 +181,7 @@
       <div class="content">
         <div class="contact-profile">
           <img src="http://emilcarlsson.se/assets/harveyspecter.png" alt="" />
-          <p>{{user.username}}</p>
+          <p id="user-name">{{user.username}}</p>
           <div class="social-media">
             <i class="fa fa-facebook" aria-hidden="true"></i>
             <i class="fa fa-twitter" aria-hidden="true"></i>
@@ -223,7 +225,23 @@
     <script src="{% static 'chitchat_user/js/chat_room.js' %}"></script>
     <script src="{% static 'chitchat_user/js/reconnecting_websocket.js' %}"></script>
     <script>
-
+function chat(user_id){
+  var userdata = {
+    "user_id":user_id,
+  }
+  $.ajax({
+    url:'/user-chat-details/',
+    type:"GET",
+    data : userdata,
+    dataType:"json",
+    success: function(data){
+      data = JSON.parse(data.user)
+      console.log(data[0].fields.first_name)
+      $('#user-name').html(data[0].fields.first_name)
+    }
+  })
+  
+}
       function attachment(){
           $("#attachment").click();
         }

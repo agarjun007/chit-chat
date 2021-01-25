@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.hashers import check_password
 import requests
 import json
-from .models import UserDetails,User,Message
+from .models import UserDetails, User, Message
 from django.utils.safestring import mark_safe
 from django.contrib.auth.decorators import login_required
 import base64
@@ -15,6 +15,10 @@ from PIL import Image
 from django.core.files import File
 import datetime
 from django.db.models import Q
+from django.contrib import messages
+from django.core import serializers
+import uuid 
+
 
 def user_login(request):
     if request.user.is_authenticated:
@@ -27,7 +31,8 @@ def user_login(request):
             if user.is_active == False:
                 return JsonResponse('blocked', safe=False)
             else:
-                auth.login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+                auth.login(request, user,
+                           backend='django.contrib.auth.backends.ModelBackend')
                 return JsonResponse('valid', safe=False)
         else:
             return JsonResponse('invalid', safe=False)
@@ -64,7 +69,8 @@ def user_registration(request):
                 'Authorization': 'Token 4dc831ffc708d93a7287b8846ab5034db634afe0'
             }
 
-            response = requests.request("POST", url, headers=headers, data=payload, files=files)
+            response = requests.request(
+                "POST", url, headers=headers, data=payload, files=files)
 
             print(response.text.encode('utf8'))
             data = response.text.encode('utf8')
@@ -99,7 +105,8 @@ def verify_otp(request):
                 'Authorization': 'Token 4dc831ffc708d93a7287b8846ab5034db634afe0'
             }
 
-            response = requests.request("POST", url, headers=headers, data=payload, files=files)
+            response = requests.request(
+                "POST", url, headers=headers, data=payload, files=files)
 
             data = response.text.encode('utf8')
             otp_data = json.loads(data.decode('utf-8'))
@@ -157,89 +164,176 @@ def user_signup(request):
 
 def user_home(request):
     if request.user.is_authenticated:
-        return render(request, 'chitchat_user/user_home.html')
+        users = User.objects.all()
+        if UserDetails.objects.filter(user=request.user).exists():
+            user_details = UserDetails.objects.get(user=request.user)
+            users_details = UserDetails.objects.filter(~Q(user=request.user))
+            context= {'users': users, 'user_details': user_details,'users_details': users_details }               
+            return render(request, 'chitchat_user/user_home.html',context )
+        else:
+            users_details = UserDetails.objects.filter(~Q(user=request.user))
+            context= {'users': users, 'user_details': user_details,'users_details': users_details,'status': 'new' }               
+            return render(request, 'chitchat_user/user_home.html',context )
     else:
         return redirect(user_login)
 
-@login_required
+
 def room(request, room_name):
-    users = User.objects.all()
-    user_details = UserDetails.objects.get(user=request.user)
-    users_details = UserDetails.objects.filter(~Q(user = request.user))
-    return render(request, 'chitchat_user/chat_room_trial.html', 
-                {'room_name_json': mark_safe(json.dumps(room_name)),
-                'username': mark_safe(json.dumps(request.user.username)),
-                'users':users,
-                'user_details':user_details,
-                'users_details':users_details
-    })
+    if request.user.is_authenticated:
+        users = User.objects.all()
+        if UserDetails.objects.filter(user=request.user).exists():
+            user_details = UserDetails.objects.get(user=request.user)
+            users_details = UserDetails.objects.filter(~Q(user=request.user))
+            return render(request, 'chitchat_user/chat_room_trial.html',
+                          {'room_name_json': mark_safe(json.dumps(room_name)),
+                           'username': mark_safe(json.dumps(request.user.username)),
+                           'users': users,
+                           'user_details': user_details,
+                           'users_details': users_details
+                           })
+        else:
+            users_details = UserDetails.objects.filter(~Q(user=request.user))
+            return render(request, 'chitchat_user/chat_room_trial.html',
+                          {'room_name_json': mark_safe(json.dumps(room_name)),
+                           'username': mark_safe(json.dumps(request.user.username)),
+                           'users': users,
+                           'users_details': users_details,
+                           'status': 'new'
+                           })
+
+    else:
+        return redirect(user_login)
+
+
 def user_profile(request):
-    user_details = UserDetails.objects.get(user=request.user)
-    content ={'user_details':user_details}
-    
-    return render(request,'chitchat_user/user_profile.html',content)
+    if request.user.is_authenticated:
+
+        if UserDetails.objects.filter(user=request.user).exists():
+            user_details = UserDetails.objects.get(user=request.user)
+        else:
+            user_details = UserDetails.objects.create(user=request.user, open_chat=1, show_propic='Everyone',
+                                                      show_profile='Everyone', show_mobile='Everyone')
+        content = {'user_details': user_details}
+
+        return render(request, 'chitchat_user/user_profile.html', content)
+
+    else:
+        return redirect(user_login)
+
 
 def edit_profile(request):
-    user_details = UserDetails.objects.get(user=request.user)
-    dob = user_details.dob.strftime('%Y-%m-%d')
-    context={'user_details':user_details,'dob':dob}
-    return render(request,'chitchat_user/user_profile_edit.html',context)   
+    if request.user.is_authenticated:
+
+        if UserDetails.objects.filter(user=request.user).exists():
+            user_details = UserDetails.objects.get(user=request.user)
+
+            if user_details.dob is not None:
+                dob = user_details.dob.strftime('%Y-%m-%d')
+                context = {'user_details': user_details, 'dob': dob}
+            else:
+                context = {'user_details': user_details}
+        else:
+            user_details = UserDetails.objects.create(user=request.user, open_chat=1, show_propic='Everyone',
+                                                      show_profile='Everyone', show_mobile='Everyone')
+            context = {'user_details': user_details}
+
+        return render(request, 'chitchat_user/user_profile_edit.html', context)
+
+    else:
+        return redirect(user_login)
+
 
 def update_profile(request):
     if request.user.is_authenticated:
-        user  = request.user
+        user = request.user
         if request.method == 'POST':
             user_details = UserDetails.objects.get(user=user)
-            user.first_name =  request.POST['first_name']
+            user.first_name = request.POST['first_name']
             user.last_name = request.POST['last_name']
-            user_details.phone = request.POST['phone']  
+            user_details.phone = request.POST['phone']
             user_details.dob = request.POST['dob']
             user_details.state = request.POST['state']
             user_details.disrict = request.POST['district']
             user_details.martial_status = request.POST['martialstatus']
             user_details.status = request.POST['status']
-            user_details.bio = request.POST['bio']   
+            user_details.bio = request.POST['bio']
 
             if 'profile-image-upload' not in request.POST:
                 profile_picture = request.FILES.get('profile-image-upload')
-                print('not post',profile_picture)
+                print('not post', profile_picture)
             else:
-                profile_picture = user_details.profile_picture     
-                print('post',profile_picture)
+                profile_picture = user_details.profile_picture
+                print('post', profile_picture)
 
             user_details.profile_picture = profile_picture
             user.save()
             user_details.save()
             return redirect(user_profile)
         else:
-            return render(request,'chitchat_user/user_profile_edit.html')    
+            return render(request, 'chitchat_user/user_profile_edit.html')
     else:
-        return redirect(user_login)     
+        return redirect(user_login)
+
 
 def user_settings(request):
     if request.user.is_authenticated:
-        user_details = UserDetails.objects.get(user=request.user)
-        context = {'user_details':user_details}
+        if UserDetails.objects.filter(user=request.user).exists():
+            user_details = UserDetails.objects.get(user=request.user)
+        else:
+            user_details = UserDetails.objects.create(user=request.user, open_chat=1, show_propic='Everyone',
+                                                      show_profile='Everyone', show_mobile='Everyone')
+
+        context = {'user_details': user_details}
+
         if request.method == 'POST':
             user_details.show_propic = request.POST['propic']
             user_details.show_profile = request.POST['profile']
             user_details.show_mobile = request.POST['mobile']
             open_chat = request.POST['open_chat']
-          
+
             if open_chat == 'yes':
                 user_details.open_chat = 1
             else:
-                user_details.open_chat = 0    
+                user_details.open_chat = 0
 
             user_details.save()
             user_details = UserDetails.objects.get(user=request.user)
-            context = {'user_details':user_details}
-            return render(request,'chitchat_user/user_settings.html',context)
-        else:    
-            return render(request,'chitchat_user/user_settings.html',context)   
+            context = {'user_details': user_details}
+            return render(request, 'chitchat_user/user_settings.html', context)
+        else:
+            return render(request, 'chitchat_user/user_settings.html', context)
     else:
-        return redirect(user_login)         
-          
+        return redirect(user_login)
+
+
 def peer_chat(request):
     if request.user.is_authenticated:
         pass
+
+
+def user_profile_view(request, id):
+    if request.user.is_authenticated:
+        user_details = UserDetails.objects.get(id=id)
+        if user_details.open_chat == 1:
+            context = {'user_details': user_details}
+            return render(request, 'chitchat_user/user_profile_view.html', context)
+        else:
+            pass
+
+
+def user_chat_details(request):
+    if request.user.is_authenticated:
+        user_id = request.GET.get('user_id')
+        print(user_id)
+        user_details = UserDetails.objects.filter(id=user_id)
+        user = [user_details[0].user]
+        print(user)
+        room_name = uuid.uuid1()    
+        for user_detail in user_details:
+            user_detail.imageurl = user_detail.ImageURL
+        print(user_details[0].imageurl)
+        response_data = {'user_details': serializers.serialize(
+            'json', user_details), 'user': serializers.serialize('json', user),
+            'room_name':room_name,'imageurl':user_detail.imageurl}
+
+        return JsonResponse(response_data)

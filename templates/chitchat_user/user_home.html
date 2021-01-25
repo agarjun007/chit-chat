@@ -1,4 +1,427 @@
-{% extends 'chitchat_user/base_home.html'%}
-{%block content%}
-<h3 style="font-size: 2rem; color: white; font-weight: bold; margin-left: 40rem;">Hi,{{user.username}}</h3>
-{%endblock%}
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="//production-assets.codepen.io/assets/editor/live/console_runner-079c09a0e3b9ff743e39ee2d5637b9216b3545af0de366d4b9aad9dc87e26bfd.js"></script>
+    <script src="//production-assets.codepen.io/assets/editor/live/events_runner-73716630c22bbc8cff4bd0f07b135f00a0bdc5d14629260c3ec49e5606f98fdd.js"></script>
+    <script src="//production-assets.codepen.io/assets/editor/live/css_live_reload_init-2c0dc5167d60a5af3ee189d570b1835129687ea2a61bee3513dee3a50c115a77.js"></script>
+    <meta charset="UTF-8" />
+    <meta name="robots" content="noindex" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,300"
+      rel="stylesheet"
+      type="text/css"
+    />
+
+    <!-- <script src="https://use.typekit.net/hoy3lrg.js"></script> -->
+    <script>
+      try {
+        Typekit.load({ async: true });
+      } catch (e) {}
+    </script>
+    <link
+      href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+      rel="stylesheet"
+      id="bootstrap-css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
+      integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA=="
+      crossorigin="anonymous"
+    />
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <!------ Include the above in your HEAD tag ---------->
+
+    <!-- <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css"> -->
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+    <!-- <script src="//code.jquery.com/jquery-1.11.1.min.js"></script> -->
+    <!------ Include the above in your HEAD tag ---------->
+    <link
+      rel="stylesheet prefetch"
+      href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css"
+    />
+    <link
+      rel="stylesheet prefetch"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css"
+    />
+    <link
+      href="{% static 'chitchat_user/css/style.css' %}"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="{% static 'chitchat_user/css/chat_room_style.css' %}"
+      rel="stylesheet"
+      type="text/css"
+    />
+  </head>
+
+  <body>
+    <div id="frame">
+      <div id="sidepanel">
+        <div id="profile">
+          <div class="wrap">
+           
+            {% if user_details.ImageURL == "" or status == 'new' %}
+            <img
+              id="profile-img" 
+              src="https://i.pinimg.com/originals/51/f6/fb/51f6fb256629fc755b8870c801092942.png"
+              class="online" 
+              alt=""
+            />
+            {%else%}
+            <img
+              id="profile-img"
+              src="{{user_details.ImageURL}}"
+              class="online" style=" height: 3rem;"
+              alt=""
+            />
+            {% endif %}
+            <p>{{user.username}}</p>
+            <i class="fa fa-chevron-down expand-button" aria-hidden="true"></i>
+            <!-- <div id="status-options">
+              <ul>
+                <li id="status-online" class="active">
+                  <span class="status-circle"></span>
+                  <p>Online</p>
+                </li>
+                <li id="status-away">
+                  <span class="status-circle"></span>
+                  <p>Away</p>
+                </li>
+                <li id="status-busy">
+                  <span class="status-circle"></span>
+                  <p>Busy</p>
+                </li>
+                <li id="status-offline">
+                  <span class="status-circle"></span>
+                  <p>Offline</p>
+                </li>
+              </ul>
+            </div> -->
+            <div id="expanded">
+              <label for="twitter"
+                ><i class="fa fa-facebook fa-fw" aria-hidden="true"></i
+              ></label>
+              <input name="twitter" type="text" value="mikeross" disabled />
+              <label for="twitter"
+                ><i class="fa fa-instagram fa-fw" aria-hidden="true"></i
+              ></label>
+              <input name="twitter" type="text" value="arjun" disabled />
+              <label for="twitter"
+                ><i class="far fa-user-circle"></i></i
+              ></label>
+              <a href="/user-profile/"><input name="twitter" type="text" value="Profile" disabled /></a>
+              <label for="twitter"
+                ><i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+              </label>
+              <a href="/user-logout/"
+                ><input name="twitter" type="text" value="LogOut" disabled
+              /></a>
+            </div>
+          </div>
+        </div>
+        <div id="search">
+          <label for=""><i class="fa fa-search" aria-hidden="true"></i></label>
+          <input type="text" placeholder="Search contacts..." />
+        </div>
+        <div id="contacts">
+          <ul>
+            {% for user_details in users_details %}
+            <li id="contact{{user_details.id}}" onclick="chat('{{user_details.id}}')" class="contact">
+              <div class="wrap">
+                <span class="contact-status online"></span>
+                {%if user_details.ImageURL == '' %}
+                <img id="propic{{user_details.id}}" src="https://i.pinimg.com/originals/51/f6/fb/51f6fb256629fc755b8870c801092942.png" alt="" />
+                {%else%}
+                <img id="propic{{user_details.id}}"  src="{{user_details.ImageURL}}" alt="" />
+                {%endif%}
+                <div class="meta">
+                  <p class="name">{{user_details.user.username}}</p>
+                  <!-- <p class="preview">You just got LITT up, Mike.</p> -->
+                </div>
+              </div>
+            </li>
+            {% endfor %}
+            <!-- <li class="contact active">
+              <div class="wrap">
+                <span class="contact-status busy"></span>
+                <img
+                  src="http://emilcarlsson.se/assets/harveyspecter.png"
+                  alt=""
+                />
+                <div class="meta">
+                  <p class="name">shaheen</p>
+                  <p class="preview">
+                    Wrong. You take the gun, or you pull out a bigger one. Or,
+                    you call their bluff. Or, you do any one of a hundred and
+                    forty six other things.
+                  </p>
+                </div>
+              </div>
+            </li> -->
+          </ul>
+          
+        </div>
+        <div id="bottom-bar">
+          <!-- <button id="addcontact">
+            <i class="fa fa-user-plus fa-fw" aria-hidden="true"></i>
+            <span>Add contact</span>
+          </button> -->
+        <a href="/user-settings/"><button id="settings">
+            <i class="fa fa-cog fa-fw" aria-hidden="true"></i>
+            <span>Settings</span>
+          </button></a>
+        </div>
+      </div>
+      <div class="content" id="head">
+         
+        </div> 
+      </div>
+    </div>
+    <script src="{% static 'chitchat_user/js/chat_room.js' %}"></script>
+    <script src="{% static 'chitchat_user/js/reconnecting_websocket.js' %}"></script>
+    <script>
+function chat(user_id){
+  var userdata = {
+    "user_id":user_id,
+  }
+  $.ajax({
+    url:'/user-chat-details/',
+    type:"GET",
+    data : userdata,
+    dataType:"json",
+    success: function(data){
+      roomName = data.room_name
+      username = JSON.parse(data.user)[0].fields.username
+      propic = data.imageurl
+      console.log(propic);
+      console.log(data);
+      $('#head').html(`<div class="contact-profile">
+       
+        <img src="${propic == "" ? 'https://i.pinimg.com/originals/51/f6/fb/51f6fb256629fc755b8870c801092942.png' : propic}" alt="" />
+     
+          <p id="user-name">${username}</p>
+          <div class="social-media">
+            <i class="fa fa-facebook" aria-hidden="true"></i>
+            <i class="fa fa-twitter" aria-hidden="true"></i>
+            <i class="fa fa-instagram" aria-hidden="true"></i>
+          </div>
+        </div> 
+        <div id="messages" class="messages">
+          <ul id="chat-log">
+          </ul>
+        </div> 
+         <div class="message-input"> 
+          <div class="wrap">
+            <input
+              id="chat-message-input"
+              type="text"
+              placeholder="Write your message..."
+              style="color: white"
+            />
+            <input id="attachment" type="file" hidden />
+            <i
+              id="papperclip"
+              class="fa fa-paperclip attachment"
+              onclick="attachment()"
+              aria-hidden="true"
+            ></i>
+            <button id="chat-message-submit" class="submit">
+              <i class="fa fa-paper-plane" type="file" aria-hidden="true"></i>
+            </button>
+          </div>`)
+      peerChat()
+
+    }
+  })
+  
+}
+      function attachment(){
+          $("#attachment").click();
+        }
+      var typeImage;
+      let type;
+      let result;
+      let arrayBuf;
+      var roomName;
+      var username;
+function peerChat(){
+    var chatSocket = new ReconnectingWebSocket(
+        'ws://' + window.location.host +
+        '/ws/chat/' + roomName + '/');
+
+      chatSocket.onopen = function(e){
+        fetchMessages();
+      }
+
+      chatSocket.onmessage = function(e){
+        var data = JSON.parse(e.data);
+        if (data['command'] === 'messages'){
+          console.log((data['messages'].length)-1)
+          for(let i=(data['messages'].length)-1 ; i>=0; i--){
+            createMessage(data['messages'][i]);
+          }
+        }else if (data['command'] === 'new_message'){
+          createMessage(data['message']);
+        }
+
+        };
+
+        chatSocket.onclose = function(e) {
+                console.error('Chat socket closed unexpectedly');
+            };
+
+            document.querySelector('#chat-message-input').focus();
+        document.querySelector('#chat-message-input').onkeyup = function(e) {
+          let msg = $('#chat-message-input').val()
+            if (e.keyCode === 13 && msg != '')  {  // enter, return
+                document.querySelector('#chat-message-submit').click();
+              }
+        };
+
+            document.querySelector('#chat-message-submit').onclick = function(e) {
+              let msg = $('#chat-message-input').val()
+            if (msg != '')  {
+                var messageInputDom = document.querySelector('#chat-message-input');
+                var message = messageInputDom.value;
+                chatSocket.send(JSON.stringify({
+                  'command':'new_message',
+                  'message': message,
+                  'from': username,
+                  'msg_type':'text'
+                  
+                }));
+                
+
+                messageInputDom.value = '';
+              }
+            };
+            upload = document.querySelector('#attachment')
+            upload.addEventListener('change', (e) => {
+              e.preventDefault()
+            console.log("***************************",e.target.files[0]);
+            let item = e.target.files[0];
+            console.log("####",item);
+            let blob = item;
+              console.log('SSSSS',blob.type)
+
+            const reader = new FileReader();
+            reader.readAsDataURL(blob)
+            reader.onload = (e) => {
+              base64_data = e.target.result;
+              arrayBuf = e.target.result;
+              console.log("11111",arrayBuf);
+                base64_value(base64_data)
+
+            }
+      
+                  const base64_value=(base64_data) => {
+                  chatSocket.send(JSON.stringify({
+                  'command':'new_message',
+                  'message': base64_data,
+                  'from': username,
+                  'msg_type':blob.type
+
+                }));
+                  }
+              
+                })
+
+        function fetchMessages() {
+          chatSocket.send(JSON.stringify({'command':'fetch_messages'}));
+          }
+
+        function createMessage(data){
+          var author = data['author'];
+
+          console.log(data['msg_type'])
+          console.log(data.content)
+          if (data.msg_type === 'image' ) {
+            console.log("IIIIIIIIIIIIIIIIIIImage", data.msg_type);
+            var msgListTag = document.createElement('li');
+            var imgTag = document.createElement('img');
+            var imgmsgTag = document.createElement('img');
+            imgmsgTag.id = 'imgmsg';
+            imgTag.src = 'http://emilcarlsson.se/assets/harveyspecter.png'
+            imgmsgTag.src = data.content;
+            msgListTag.appendChild(imgTag);
+            msgListTag.appendChild(imgmsgTag);            
+            document.querySelector('#chat-log').appendChild(msgListTag);
+            if(author === username) {
+            msgListTag.className = 'replies';
+            } else {
+              msgListTag.className = 'sent';
+            }
+
+          } else if(data.msg_type ==='text') {
+            var msgListTag = document.createElement('li');
+            var imgTag = document.createElement('img');
+            var pTag = document.createElement('p');
+            pTag.id ='msgtag'
+            imgTag.src = 'http://emilcarlsson.se/assets/harveyspecter.png'
+            pTag.textContent = data.content;
+            msgListTag.appendChild(imgTag);
+            msgListTag.appendChild(pTag);
+            document.querySelector('#chat-log').appendChild(msgListTag);
+            if(author === username) {
+            msgListTag.className = 'replies';
+            } else {
+              msgListTag.className = 'sent';
+            }
+
+          } else  if (data.msg_type === 'video' ) {
+            console.log("ViiIdeooooo", data.msg_type);
+            var msgListTag = document.createElement('li');
+            var imgTag = document.createElement('img');
+            var videomsgTag = document.createElement('video');
+            videomsgTag.id = 'videomsg';
+            videomsgTag.controls = true;
+            imgTag.src = 'http://emilcarlsson.se/assets/harveyspecter.png'
+            videomsgTag.src = data.content;
+            msgListTag.appendChild(imgTag);
+            msgListTag.appendChild(videomsgTag);            
+            document.querySelector('#chat-log').appendChild(msgListTag);
+            if(author === username) {
+            msgListTag.className = 'replies';
+            } else {
+              msgListTag.className = 'sent';
+            }
+
+          } else  if (data.msg_type === 'audio' ) {
+            console.log("Audiieooooo", data.msg_type);
+            var msgListTag = document.createElement('li');
+            var imgTag = document.createElement('img');
+            var audiomsgTag = document.createElement('audio');
+            audiomsgTag.id = 'audiomsg';
+            audiomsgTag.controls = true;
+            imgTag.src = 'http://emilcarlsson.se/assets/harveyspecter.png'
+            audiomsgTag.src = data.content;
+            msgListTag.appendChild(imgTag);
+            msgListTag.appendChild(audiomsgTag);            
+            document.querySelector('#chat-log').appendChild(msgListTag);
+            if(author === username) {
+            msgListTag.className = 'replies';
+            } else {
+              msgListTag.className = 'sent';
+            }
+
+          } 
+
+            var chatWindow =document.getElementById('messages')
+          var xH = document.getElementById("messages").scrollHeight;
+          chatWindow.scrollTo(0,xH)  
+
+        };
+}
+
+
+    </script>
+
+  </body>
+
+</html>

@@ -13,8 +13,6 @@ urlpatterns = [
     path('user-profile-edit/',views.edit_profile,name='user-profile-edit'),
     path('user-profile-update/',views.update_profile,name='user-profile-update'),
     path('user-settings/',views.user_settings,name='user_settings'),
-
-
-
-
+    path('user-profile-view/<int:id>',views.user_profile_view ,name='user-profile-view'),
+    path('user-chat-details/',views.user_chat_details,name='user-chat-details'),
 ]
