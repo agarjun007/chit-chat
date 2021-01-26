@@ -372,6 +372,7 @@
     padding: 10px 0 15px 0;
     font-size: 0.9em;
     cursor: pointer;
+    padding-top: 2rem;
   }
   @media screen and (max-width: 735px) {
     #frame #sidepanel #contacts ul li.contact {

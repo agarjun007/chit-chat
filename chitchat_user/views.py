@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.hashers import check_password
 import requests
 import json
-from .models import UserDetails, User, Message
+from .models import UserDetails, User, Message,OneToOneChat
 from django.utils.safestring import mark_safe
 from django.contrib.auth.decorators import login_required
 import base64
@@ -327,8 +327,24 @@ def user_chat_details(request):
         print(user_id)
         user_details = UserDetails.objects.filter(id=user_id)
         user = [user_details[0].user]
+        user_2 = user[0].username
+        print(user[0].username)
         print(user)
-        room_name = uuid.uuid1()    
+        if OneToOneChat.objects.filter(user_1 = request.user.username , user_2 = user_2  ).exists(): 
+            one_to_one = OneToOneChat.objects.get(user_1 = request.user.username  , user_2 = user_2 ) 
+            room_name = one_to_one.room_name
+            print(room_name, 'get room_nameeeeeeeeee1111')
+        elif OneToOneChat.objects.filter(user_1 = user_2 , user_2 =  request.user.username ).exists():
+            one_to_one =  OneToOneChat.objects.get(user_1 = user_2 , user_2 =  request.user.username )
+            room_name = one_to_one.room_name
+            print(room_name, 'get room_nameeeeeeeeee222222')      
+        else: 
+            room_name = uuid.uuid1()   
+            OneToOneChat.objects.create(user_1 = request.user.username, user_2 = user_2,room_name=room_name)
+            print(room_name, 'newwwwwwwwwww room_nameeeeeeeeee')
+        
+        print(room_name, 'databaseeeee room_nameeeeeeeeee')
+
         for user_detail in user_details:
             user_detail.imageurl = user_detail.ImageURL
         print(user_details[0].imageurl)

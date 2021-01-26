@@ -12,8 +12,8 @@ User = get_user_model()
 class ChatConsumer(WebsocketConsumer):
     
     def fetch_messages(self, data):
-        # print('messageeeeqqqqe',data)
-        messages = Message.last_10_messages()
+        print('fetch data ....',self.room_name)
+        messages = Message.objects.filter(room_name = self.room_name).order_by('-timestamp').all()[:10]
         content = {
             'command':'messages',
             'messages': self.messages_to_json(messages)
@@ -27,6 +27,7 @@ class ChatConsumer(WebsocketConsumer):
         print('typeeeeee',data['msg_type'])
         file_type = data['msg_type'][:5]
         print(file_type)
+        print(self.room_name)
         # print('messageeeee',data)
         if file_type == 'image' or file_type == 'audio' or file_type == 'video':
             print('insideeee')
@@ -40,13 +41,13 @@ class ChatConsumer(WebsocketConsumer):
             print('fileeeeeeee',file_decoded)
             msg_type = file_type
             author_user = User.objects.filter(username = author)[0]
-            message = Message.objects.create(author = author_user,content=content_msg,file_uploaded=file_decoded,file_type=file_type) 
+            message = Message.objects.create(author = author_user,content=content_msg,file_uploaded=file_decoded,file_type=file_type,room_name=self.room_name) 
 
         else:
             content_msg = data['message']
             msg_type = data['msg_type']
             author_user = User.objects.filter(username = author)[0]
-            message = Message.objects.create(author = author_user,content=content_msg,file_type=msg_type)   
+            message = Message.objects.create(author = author_user,content=content_msg,file_type=msg_type,room_name=self.room_name)   
      
         # print('base644444',data['message'])
         # msg_type = data['msg_type']
