@@ -330,7 +330,7 @@ def user_chat_details(request):
         user_2 = user[0].username
         print(user[0].username)
         print(user)
-        if OneToOneChat.objects.filter(user_1 = request.user.username , user_2 = user_2  ).exists(): 
+        if OneToOneChat.objects.filter(user_1 = request.user.username , user_2 = user_2 ).exists(): 
             one_to_one = OneToOneChat.objects.get(user_1 = request.user.username  , user_2 = user_2 ) 
             room_name = one_to_one.room_name
             print(room_name, 'get room_nameeeeeeeeee1111')

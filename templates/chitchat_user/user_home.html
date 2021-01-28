@@ -127,10 +127,10 @@
         </div>
         <div id="search">
           <label for=""><i class="fa fa-search" aria-hidden="true"></i></label>
-          <input type="text" placeholder="Search contacts..." />
+          <input type="text" id="search-field" onkeyup="search()" placeholder="Search contacts..." />
         </div>
         <div id="contacts">
-          <ul>
+          <ul id="ul-contacts">
             {% for user_details in users_details %}
             <li id="contact{{user_details.id}}" onclick="chat('{{user_details.id}}')" class="contact">
               <div class="wrap">
@@ -172,7 +172,7 @@
             <i class="fa fa-user-plus fa-fw" aria-hidden="true"></i>
             <span>Add contact</span>
           </button> -->
-        <a href="/user-settings/"><button id="settings">
+        <a href="/user-settings/"><button  id="settings">
             <i class="fa fa-cog fa-fw" aria-hidden="true"></i>
             <span>Settings</span>
           </button></a>
@@ -186,6 +186,61 @@
     <script src="{% static 'chitchat_user/js/chat_room.js' %}"></script>
     <script src="{% static 'chitchat_user/js/reconnecting_websocket.js' %}"></script>
     <script>
+      function updateProgress(evt){
+  if (evt.lengthComputable){
+     var percentComplete = (evt.loaded / evt.total)*100;  
+      console.log(percentComplete+"% completed");
+   } 
+}
+
+var request = new XMLHttpRequest(); 
+request.onprogress=updateProgress;
+
+$.ajax({
+    xhr: function(){
+       var xhr = new window.XMLHttpRequest();
+         // Handle progress
+         //Upload progress
+       xhr.upload.addEventListener("progress", function(evt){
+           if (evt.lengthComputable) {
+              var percentComplete = evt.loaded / evt.total;
+              //Do something with upload progress
+              console.log(percentComplete);
+           }
+       }, false);
+       //Download progress
+       xhr.addEventListener("progress", function(evt){
+            if (evt.lengthComputable) {
+              var percentComplete = evt.loaded / evt.total;
+              //Do something with download progress
+              console.log(percentComplete);
+            }
+       }, false);
+
+       return xhr;
+    },
+    complete:function(){
+        console.log("Request finished.");
+    }
+});
+
+
+function search() {
+  var input, filter, ul, li, i, txtValue;
+  input = document.getElementById('search-field');
+  filter = input.value.toUpperCase();
+  ul = document.getElementById("ul-contacts");
+  li = ul.getElementsByTagName('li');
+  for (i = 0; i < li.length; i++) {
+    txtValue =  li[i].innerText;
+    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+      li[i].style.display = "";
+    } else {
+      li[i].style.display = "none";
+    }
+  }
+}
+
 function chat(user_id){
   var userdata = {
     "user_id":user_id,
@@ -229,6 +284,7 @@ function chat(user_id){
               id="papperclip"
               class="fa fa-paperclip attachment"
               onclick="attachment()"
+              onprogress="updateProgress()"
               aria-hidden="true"
             ></i>
             <button id="chat-message-submit" class="submit">
@@ -414,7 +470,7 @@ function peerChat(){
 
             var chatWindow =document.getElementById('messages')
           var xH = document.getElementById("messages").scrollHeight;
-          chatWindow.scrollTo(0,xH)  
+          chatWindow.scrollTo(0,xH )  
 
         };
 }

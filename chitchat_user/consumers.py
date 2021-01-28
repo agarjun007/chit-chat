@@ -1,7 +1,7 @@
 import json
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
-from .models import Message
+from .models import Message,OneToOneChat
 from django.contrib.auth import get_user_model
 import base64
 from django.core.files.base import ContentFile
@@ -12,15 +12,21 @@ User = get_user_model()
 class ChatConsumer(WebsocketConsumer):
     
     def fetch_messages(self, data):
-        print('fetch data ....',self.room_name)
-        messages = Message.objects.filter(room_name = self.room_name).order_by('-timestamp').all()[:10]
-        content = {
-            'command':'messages',
-            'messages': self.messages_to_json(messages)
-        }
-        # print('contentttt',content)
+        # author = data['from']
+        # logged_user = self.scope["user"]
+        # print('authorrrr',author)
+        # print('loggedd userrr',logged_user)
+        # if  author == logged_user :
+        
+            print('fetch data ....',self.room_name)
+            messages = Message.objects.filter(room_name = self.room_name).order_by('-timestamp').all()[:10]
+            content = {
+                'command':'messages',
+                'messages': self.messages_to_json(messages)
+            }
+            # print('contentttt',content)
 
-        self.send_message(content)
+            self.send_message(content)
 
     def new_message(self, data):
         author = data['from']
@@ -89,21 +95,26 @@ class ChatConsumer(WebsocketConsumer):
      }
     
     def connect(self):
-        print('dshbbbbbbbbbbbjdbbdd ')
+        print('dshbbbbbbbbbbbjdbbdd ') 
+
         self.room_name = self.scope['url_route']['kwargs']['room_name']
         self.room_group_name = 'chat_%s' % self.room_name
         # print(self.channel_name)
         # print('layer...',self.channel_layer)
         # print('groupname....',self.room_group_name)
-        # print(self.room_name)
-        # print(self.scope["user"])
-        # Join room group
-        async_to_sync(self.channel_layer.group_add)(
-            self.room_group_name,
-            self.channel_name
-        )
+        one_to_one = OneToOneChat.objects.get(room_name = self.room_name)
+        print(one_to_one.user_1,one_to_one.user_2)
+        print(self.room_name)
+        print(self.scope["user"])
+        if one_to_one.user_1 ==  str(self.scope["user"]) or one_to_one.user_2 ==  str(self.scope["user"])  :
+            print('authenticated user')
+            # Join room group
+            async_to_sync(self.channel_layer.group_add)(
+                self.room_group_name,
+                self.channel_name
+            )
 
-        self.accept()
+            self.accept()
 
     def disconnect(self, close_code):
         # Leave room group
