@@ -12,23 +12,52 @@
     text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.004);
     -webkit-font-smoothing: antialiased;
   }
-  #imgmsg{
+  
+  #urlmsg{
+    padding: 10px 15px;
+    border-radius: 20px;
+    max-width: 205px;
+    line-height: 130%;
+    background: #f5f5f5;
+    float: right;
+
+  }
+  #imgmsg {
     height: 150px;
     width: 150px;
     border-radius: 0;
-    margin-left: 25px;
+    float: right;
 
   }
-  #videomsg{
+  .replies > video{
     height: 150px;
     width: 200px;
+    padding: 10px 15px;
+    border-radius: 20px;
+    line-height: 130%;
     border-radius: 0;
     float: right;
+
+  }
+  .sent > video{
+    height: 150px;
+    width: 200px;
+    padding: 10px 15px;
+    border-radius: 20px;
+    line-height: 130%;
+    border-radius: 0;
+    float: left;
+
   }
   #audiomsg{
     height: 30px;
     width: 200px;
+    padding: 0px 15px;
+    border-radius: 20px;
+    line-height: 130%;
     border-radius: 0;
+    float: right;
+
   }
   
   #frame {
@@ -39,6 +68,8 @@
     min-height: 300px;
     max-height: 720px;
     background: #E6EAEA;
+    margin-left: 8rem;
+    margin-top: 2rem;
   }
   @media screen and (max-width: 360px) {
     #frame {
@@ -52,7 +83,7 @@
     max-width: 340px;
     width: 40%;
     height: 100%;
-    background: #000000;
+    background: #051952f0;
     color: #f5f5f5;
     overflow: hidden;
     position: relative;
@@ -217,7 +248,7 @@
     }
   }
   #frame #sidepanel #profile .wrap #status-options ul li:hover {
-    background: #496886;
+    background: #94bae0;
   }
   #frame #sidepanel #profile .wrap #status-options ul li span.status-circle {
     position: absolute;
@@ -323,12 +354,12 @@
     padding: 10px 0 10px 46px;
     width: calc(100% - 25px);
     border: none;
-    background: #000000;
+    background:#030950;;
     color: #f5f5f5;
   }
   #frame #sidepanel #search input:focus {
     outline: none;
-    background: #000000;
+    background: #030950;;
   }
   #frame #sidepanel #search input::-webkit-input-placeholder {
     color: #f5f5f5;
@@ -368,11 +399,11 @@
     background-color: #243140;
   }
   #frame #sidepanel #contacts ul li.contact {
-    position: relative;
-    padding: 10px 0 15px 0;
+    position: relative; 
     font-size: 0.9em;
     cursor: pointer;
-    padding-top: 2rem;
+    margin-top: 1rem;
+    
   }
   @media screen and (max-width: 735px) {
     #frame #sidepanel #contacts ul li.contact {
@@ -471,7 +502,7 @@
     border: none;
     width: 50%;
     padding: 10px 0;
-    background: #000000;
+    background: #011b44;
     color: #f5f5f5;
     cursor: pointer;
     font-size: 0.85em;
@@ -560,9 +591,9 @@
     color: #435f7a;
   }
   #frame .content .messages {
-    height: auto;
-    min-height: calc(100% - 93px);
-    max-height: calc(100% - 93px);
+    height: 60vh;
+    min-height: 60vh;
+    /* max-height: calc(100% - 93px); */
     overflow-y: scroll;
     overflow-x: hidden;
   }

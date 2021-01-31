@@ -3,12 +3,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <script src="//production-assets.codepen.io/assets/editor/live/console_runner-079c09a0e3b9ff743e39ee2d5637b9216b3545af0de366d4b9aad9dc87e26bfd.js"></script>
-    <script src="//production-assets.codepen.io/assets/editor/live/events_runner-73716630c22bbc8cff4bd0f07b135f00a0bdc5d14629260c3ec49e5606f98fdd.js"></script>
-    <script src="//production-assets.codepen.io/assets/editor/live/css_live_reload_init-2c0dc5167d60a5af3ee189d570b1835129687ea2a61bee3513dee3a50c115a77.js"></script>
-    <meta charset="UTF-8" />
-    <meta name="robots" content="noindex" />
-    <link
+   <link
       href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,300"
       rel="stylesheet"
       type="text/css"
@@ -168,16 +163,19 @@
           
         </div>
         <div id="bottom-bar">
+          
           <!-- <button id="addcontact">
             <i class="fa fa-user-plus fa-fw" aria-hidden="true"></i>
             <span>Add contact</span>
           </button> -->
+
         <a href="/user-settings/"><button  id="settings">
-            <i class="fa fa-cog fa-fw" aria-hidden="true"></i>
+            <i  class="fa fa-cog fa-fw" aria-hidden="true"></i>
             <span>Settings</span>
           </button></a>
         </div>
       </div>
+      
       <div class="content" id="head">
          
         </div> 
@@ -186,44 +184,46 @@
     <script src="{% static 'chitchat_user/js/chat_room.js' %}"></script>
     <script src="{% static 'chitchat_user/js/reconnecting_websocket.js' %}"></script>
     <script>
-      function updateProgress(evt){
-  if (evt.lengthComputable){
-     var percentComplete = (evt.loaded / evt.total)*100;  
-      console.log(percentComplete+"% completed");
-   } 
-}
 
+    function updateProgress(evt){
+      console.log('function 1');
+    if (evt.lengthComputable){
+      console.log('function 2');
+      var percentComplete = (evt.loaded / evt.total)*100;  
+      console.log(percentComplete+"% completed");
+    } 
+   } 
+   
 var request = new XMLHttpRequest(); 
 request.onprogress=updateProgress;
 
-$.ajax({
-    xhr: function(){
-       var xhr = new window.XMLHttpRequest();
-         // Handle progress
-         //Upload progress
-       xhr.upload.addEventListener("progress", function(evt){
-           if (evt.lengthComputable) {
-              var percentComplete = evt.loaded / evt.total;
-              //Do something with upload progress
-              console.log(percentComplete);
-           }
-       }, false);
-       //Download progress
-       xhr.addEventListener("progress", function(evt){
-            if (evt.lengthComputable) {
-              var percentComplete = evt.loaded / evt.total;
-              //Do something with download progress
-              console.log(percentComplete);
-            }
-       }, false);
+// $.ajax({
+//     xhr: function(){
+//        var xhr = new window.XMLHttpRequest();
+//          // Handle progress
+//          //Upload progress
+//        xhr.upload.addEventListener("progress", function(evt){
+//            if (evt.lengthComputable) {
+//               var percentComplete = evt.loaded / evt.total;
+//               //Do something with upload progress
+//               console.log(percentComplete);
+//            }
+//        }, false);
+//        //Download progress
+//        xhr.addEventListener("progress", function(evt){
+//             if (evt.lengthComputable) {
+//               var percentComplete = evt.loaded / evt.total;
+//               //Do something with download progress
+//               console.log(percentComplete);
+//             }
+//        }, false);
 
-       return xhr;
-    },
-    complete:function(){
-        console.log("Request finished.");
-    }
-});
-
+//        return xhr;
+//     },
+//     complete:function(){
+//         console.log("Request finished.");
+//     }
+// });
 
 function search() {
   var input, filter, ul, li, i, txtValue;
@@ -240,6 +240,11 @@ function search() {
     }
   }
 }
+
+function hidePreview(){
+  console.log('hideeeeeeeeee');
+$('#msg-preview').hide()   
+       };
 
 function chat(user_id){
   var userdata = {
@@ -270,8 +275,14 @@ function chat(user_id){
         <div id="messages" class="messages">
           <ul id="chat-log">
           </ul>
-        </div> 
+        </div>
+        <div id="msg-preview" style=" display: none;     background-color: rgb(177, 230, 191);
+        height: 6rem;
+    width: 24rem;
+    margin: 0rem 0rem 0rem 4rem;"> </div>
+        <div class="message-input"> 
          <div class="message-input"> 
+        <div class="message-input"> 
           <div class="wrap">
             <input
               id="chat-message-input"
@@ -333,8 +344,57 @@ function peerChat(){
             };
 
             document.querySelector('#chat-message-input').focus();
+            document.querySelector('#chat-message-input').onchange = function(e) {
+              let msg = $('#chat-message-input').val()
+              console.log(msg);
+              isUrlValid(msg)
+              
+              function isUrlValid(userInput) {
+              var res = userInput.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g); 
+        if (res == null) {
+          type ='text'
+          return false;
+            
+        }
+        else{     
+
+          $("#msg-preview").show();   
+          type = 'url'
+          
+              $.ajax({
+                  url: "https://api.linkpreview.net",
+                  dataType: 'jsonp',
+                  data: {q: msg, key: 'e8b609c67fd94317b0e5fb27401b479c'},
+                  success: function (response) {
+                      var data=response;
+              $("#msg-preview").html(` <img style="width:45px;height:40px;" src="${data.image}">
+              <h4 style="font-weight: bold; display:inline-block">${data.title}</h4>
+              <i onclick="hidePreview()" style="float:right;" class="fas fa-times-circle"></i> 
+              <p>${data.description.slice(0,80)}...</p>
+              <a href="${data.url}">${data.url}</a>  `);
+                
+              
+              console.log(data.image);
+              console.log(data);
+                  }
+              });
+          return true;
+        }
+    }
+              // $("#msg-preview").html(`<img style="width:45px;height:40px;" 
+              // src="https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__340.jpg"> 
+              // <h4 style="display:inline-block"><b>Sample</b></h4> 
+              // <p>Its a sample image preview </p>
+              // <a href="www.sample.com">www.sample.com</a> `);
+              
+            
+          };
+          
+
         document.querySelector('#chat-message-input').onkeyup = function(e) {
           let msg = $('#chat-message-input').val()
+
+       
             if (e.keyCode === 13 && msg != '')  {  // enter, return
                 document.querySelector('#chat-message-submit').click();
               }
@@ -342,20 +402,38 @@ function peerChat(){
 
             document.querySelector('#chat-message-submit').onclick = function(e) {
               let msg = $('#chat-message-input').val()
-            if (msg != '')  {
+              $("#msg-preview").hide();
+              console.log('click function',type);
+
+            if (msg != '' && type == 'text')  {
                 var messageInputDom = document.querySelector('#chat-message-input');
                 var message = messageInputDom.value;
                 chatSocket.send(JSON.stringify({
                   'command':'new_message',
                   'message': message,
                   'from': username,
-                  'msg_type':'text'
+                  'msg_type':type
                   
                 }));
                 
 
                 messageInputDom.value = '';
               }
+              else  if (msg != '' && type == 'url')  {
+                var messageInputDom = document.querySelector('#chat-message-input');
+                var message = messageInputDom.value;
+                chatSocket.send(JSON.stringify({
+                  'command':'new_message',
+                  'message': message,
+                  'from': username,
+                  'msg_type':type
+                  
+                }));
+                
+
+                messageInputDom.value = '';
+              }
+
             };
             upload = document.querySelector('#attachment')
             upload.addEventListener('change', (e) => {
@@ -375,18 +453,19 @@ function peerChat(){
                 base64_value(base64_data)
 
             }
-      
+                  type = blob.type
                   const base64_value=(base64_data) => {
                   chatSocket.send(JSON.stringify({
                   'command':'new_message',
                   'message': base64_data,
                   'from': username,
-                  'msg_type':blob.type
+                  'msg_type':type
 
                 }));
                   }
               
                 })
+       
 
         function fetchMessages() {
           chatSocket.send(JSON.stringify({'command':'fetch_messages'}));
@@ -459,6 +538,26 @@ function peerChat(){
             audiomsgTag.src = data.content;
             msgListTag.appendChild(imgTag);
             msgListTag.appendChild(audiomsgTag);            
+            document.querySelector('#chat-log').appendChild(msgListTag);
+            if(author === username) {
+            msgListTag.className = 'replies';
+            } else {
+              msgListTag.className = 'sent';
+            }
+
+          }
+          
+          else  if (data.msg_type === 'url' ) {
+            console.log("Urlll", data.msg_type);
+            var msgListTag = document.createElement('li');
+            var imgTag = document.createElement('img');
+            var urlTag = document.createElement('a');
+            urlTag.id = 'urlmsg';
+            imgTag.src = 'http://emilcarlsson.se/assets/harveyspecter.png'
+            urlTag.textContent = data.content;
+            urlTag.href = data.content;
+            msgListTag.appendChild(imgTag);
+            msgListTag.appendChild(urlTag);            
             document.querySelector('#chat-log').appendChild(msgListTag);
             if(author === username) {
             msgListTag.className = 'replies';
