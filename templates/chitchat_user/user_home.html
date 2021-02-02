@@ -185,6 +185,8 @@
     <script src="{% static 'chitchat_user/js/reconnecting_websocket.js' %}"></script>
     <script>
 
+
+
     function updateProgress(evt){
       console.log('function 1');
     if (evt.lengthComputable){
@@ -224,6 +226,15 @@ request.onprogress=updateProgress;
 //         console.log("Request finished.");
 //     }
 // });
+          // function selectImage(){
+          //   upload = document.querySelector('#image')
+          //   } 
+          //   function selectAudio(){
+          //   upload = document.querySelector('#audio')
+          //   } 
+          //   function selectVideo(){
+          //    upload = document.querySelector('#video')
+          //   } 
 
 function search() {
   var input, filter, ul, li, i, txtValue;
@@ -261,6 +272,7 @@ function chat(user_id){
       propic = data.imageurl
       console.log(propic);
       console.log(data);
+      
       $('#head').html(`<div class="contact-profile">
        
         <img src="${propic == "" ? 'https://i.pinimg.com/originals/51/f6/fb/51f6fb256629fc755b8870c801092942.png' : propic}" alt="" />
@@ -280,8 +292,30 @@ function chat(user_id){
         height: 6rem;
     width: 24rem;
     margin: 0rem 0rem 0rem 4rem;"> </div>
-        <div class="message-input"> 
-         <div class="message-input"> 
+
+    <div class='attachment-ico' style="
+    display: none;">
+        <div  class="attachment-icons" style="  height: 3rem;
+    width: 8rem;
+    background-color: rgb(207 224 211);
+    margin: 3rem 0rem 0rem 27rem;
+    border-radius: 3rem;
+    justify-content: space-evenly;
+    align-items: center;
+    display: flex;
+    position: relative;
+    font-size: 20px;" >
+    <input class="attachment-icons" id="image"  type="file" accept="image/*" hidden />  
+    <input class="attachment-icons" id="audio"  type="file" accept="audio/*" hidden />  
+    <input class="attachment-icons" id="video" type="file" accept="video/*" hidden/>
+
+     <i onclick="showImage()" style="color:crimson" class="fas fa-camera"></i>
+     <i onclick="showAudio()" style="color:darkgreen"class="fas fa-microphone"></i>
+     <i onclick="showVideo()" style="color:dark blue" class="fas fa-video"></i>
+
+
+ </div></div>
+
         <div class="message-input"> 
           <div class="wrap">
             <input
@@ -290,12 +324,11 @@ function chat(user_id){
               placeholder="Write your message..."
               style="color: white"
             />
-            <input id="attachment" type="file" hidden />
+            <input id="attachment" onprogress="updateProgress()" type="file" hidden />
             <i
               id="papperclip"
               class="fa fa-paperclip attachment"
-              onclick="attachment()"
-              onprogress="updateProgress()"
+              onclick="mediaOptions()"
               aria-hidden="true"
             ></i>
             <button id="chat-message-submit" class="submit">
@@ -308,6 +341,22 @@ function chat(user_id){
   })
   
 }
+function showImage(){
+  $("#image").click();
+}
+function showAudio(){
+  $("#audio").click();
+}
+function showVideo(){
+  $("#video").click();
+}
+
+function mediaOptions(){
+  $(".attachment-ico").toggle();
+  $('.attachment-icons').css({opacity: 0}).animate({
+                opacity: 1
+            }, 1000);
+}
       function attachment(){
           $("#attachment").click();
         }
@@ -317,7 +366,7 @@ function chat(user_id){
       let arrayBuf;
       var roomName;
       var username;
-function peerChat(){
+function peerChat() {
     var chatSocket = new ReconnectingWebSocket(
         'ws://' + window.location.host +
         '/ws/chat/' + roomName + '/');
@@ -348,6 +397,7 @@ function peerChat(){
               let msg = $('#chat-message-input').val()
               console.log(msg);
               isUrlValid(msg)
+
               
               function isUrlValid(userInput) {
               var res = userInput.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g); 
@@ -368,7 +418,7 @@ function peerChat(){
                   success: function (response) {
                       var data=response;
               $("#msg-preview").html(` <img style="width:45px;height:40px;" src="${data.image}">
-              <h4 style="font-weight: bold; display:inline-block">${data.title}</h4>
+              <h4 style="font-weight: bold; display:inline-block">${data.title.slice(0,10)}</h4>
               <i onclick="hidePreview()" style="float:right;" class="fas fa-times-circle"></i> 
               <p>${data.description.slice(0,80)}...</p>
               <a href="${data.url}">${data.url}</a>  `);
@@ -381,14 +431,12 @@ function peerChat(){
           return true;
         }
     }
-              // $("#msg-preview").html(`<img style="width:45px;height:40px;" 
-              // src="https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__340.jpg"> 
-              // <h4 style="display:inline-block"><b>Sample</b></h4> 
-              // <p>Its a sample image preview </p>
-              // <a href="www.sample.com">www.sample.com</a> `);
               
             
           };
+            
+
+
           
 
         document.querySelector('#chat-message-input').onkeyup = function(e) {
@@ -435,7 +483,8 @@ function peerChat(){
               }
 
             };
-            upload = document.querySelector('#attachment')
+            
+            upload = document.querySelector('.attachment-icons')
             upload.addEventListener('change', (e) => {
               e.preventDefault()
             console.log("***************************",e.target.files[0]);
