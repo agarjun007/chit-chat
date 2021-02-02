@@ -99,14 +99,14 @@
               </ul>
             </div> -->
             <div id="expanded">
-              <label for="twitter"
+              <!-- <label for="twitter"
                 ><i class="fa fa-facebook fa-fw" aria-hidden="true"></i
               ></label>
               <input name="twitter" type="text" value="mikeross" disabled />
               <label for="twitter"
                 ><i class="fa fa-instagram fa-fw" aria-hidden="true"></i
               ></label>
-              <input name="twitter" type="text" value="arjun" disabled />
+              <input name="twitter" type="text" value="arjun" disabled /> -->
               <label for="twitter"
                 ><i class="far fa-user-circle"></i></i
               ></label>
@@ -489,20 +489,38 @@ function peerChat() {
               e.preventDefault()
             console.log("***************************",e.target.files[0]);
             let item = e.target.files[0];
-            console.log("####",item);
-            let blob = item;
-              console.log('SSSSS',blob.type)
+            //trial chunk 
+            var file = item;
+            var chunkSize = 1024 * 1024;
+            var fileSize = file.size;
+            var chunks = Math.ceil(file.size/chunkSize,chunkSize);
+            var chunk = 0;
+
+            console.log('file size..',fileSize);
+            console.log('chunks...',chunks);
+
+            while (chunk < chunks) {
+                var offset = chunk*chunkSize;
+                console.log('current chunk..', chunk);
+                console.log('offset...', chunk*chunkSize);
+                console.log('file blob from offset...', offset)
+                console.log(file.slice(offset,offset+chunkSize));
+                
+                //test data
+          // console.log("####",item);
+            let blob = file.slice(offset,offset+chunkSize);
+              console.log('SSSSS',file.type)
 
             const reader = new FileReader();
             reader.readAsDataURL(blob)
             reader.onload = (e) => {
               base64_data = e.target.result;
-              arrayBuf = e.target.result;
-              console.log("11111",arrayBuf);
+              // arrayBuf = e.target.result;
+              console.log("11111",base64_data);
                 base64_value(base64_data)
 
             }
-                  type = blob.type
+                  type = file.type
                   const base64_value=(base64_data) => {
                   chatSocket.send(JSON.stringify({
                   'command':'new_message',
@@ -512,6 +530,11 @@ function peerChat() {
 
                 }));
                   }
+                //testend
+                chunk++;
+            }
+            // end trial chunk
+            
               
                 })
        
