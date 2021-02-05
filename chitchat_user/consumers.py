@@ -1,7 +1,7 @@
 import json
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
-from .models import Message,OneToOneChat
+from .models import Message,OneToOneChat,UserDetails
 from django.contrib.auth import get_user_model
 import base64
 from django.core.files.base import ContentFile
@@ -72,19 +72,24 @@ class ChatConsumer(WebsocketConsumer):
 
 
     def message_to_json(self,message):
+        logged_user =self.scope["user"]
+        userdetail = UserDetails.objects.get(user = logged_user )
+        print('imageeeeee',userdetail.ImageURL)
         if message.content == "":
             return{
                 'author': message.author.username,
                 'content':message.file_uploaded.url,
                 'timestamp': str(message.timestamp),
-                'msg_type' : message.file_type
+                'msg_type' : message.file_type,
+                'user_image' : userdetail.ImageURL
             }
         else:
             return{
             'author': message.author.username,
             'content':message.content,
             'timestamp': str(message.timestamp),
-            'msg_type' : message.file_type
+            'msg_type' : message.file_type,
+            'user_image' : userdetail.ImageURL
         }
                     
 

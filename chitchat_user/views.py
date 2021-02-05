@@ -171,7 +171,10 @@ def user_home(request):
             context= {'users': users, 'user_details': user_details,'users_details': users_details }               
             return render(request, 'chitchat_user/user_home.html',context )
         else:
+            user_details = UserDetails.objects.create(user=request.user, open_chat=1, show_propic='Everyone',
+                                                      show_profile='Everyone', show_mobile='Everyone')
             users_details = UserDetails.objects.filter(~Q(user=request.user))
+            user_details = UserDetails.objects.get(user=request.user)
             context= {'users': users, 'user_details': user_details,'users_details': users_details,'status': 'new' }               
             return render(request, 'chitchat_user/user_home.html',context )
     else:

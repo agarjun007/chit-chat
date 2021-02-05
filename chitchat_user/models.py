@@ -34,6 +34,14 @@ class Message(models.Model):
     file_uploaded = models.FileField(upload_to="video/",default="")
     file_type = models.CharField(max_length=50,null=True,blank=True)
     room_name = models.CharField(max_length=100,null=True,blank=True)
+    chat_icon = models.ImageField(null=True,blank=True)
+    @property 
+    def ImageURL(self):
+        try:
+            url = self.chat_icon.url
+        except:
+            url = ''
+        return url        
 
     @property
     def File_URL(self):

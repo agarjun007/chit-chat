@@ -13,7 +13,16 @@
     -webkit-font-smoothing: antialiased;
   }
   
-  #urlmsg{
+ .sent > a{
+    padding: 10px 15px;
+    border-radius: 20px;
+    max-width: 205px;
+    line-height: 130%;
+    background: #f5f5f5;
+    float: left;
+
+  }
+  .replies > a{
     padding: 10px 15px;
     border-radius: 20px;
     max-width: 205px;
@@ -49,7 +58,16 @@
     float: left;
 
   }
-  #audiomsg{
+  .sent > audio {
+    height: 30px;
+    width: 200px;
+    padding: 0px 15px;
+    border-radius: 20px;
+    line-height: 130%;
+    border-radius: 0;
+    float: left;
+  }
+  .replies > audio{
     height: 30px;
     width: 200px;
     padding: 0px 15px;
@@ -59,7 +77,31 @@
     float: right;
 
   }
+  .replies > .link-preview{
+    float:right;
+    height: 10rem;
+    width: 12rem;
+    background-color:#bcc4d4b8;
+    
+  }
+  .link-preview > img{
+    border-radius: 0 !important;
+    width: 100px!important;
+    height: 50px!important;
+    float: right!important;
+  }
+  .link-preview > #desc-preview{
+    float:left!important;
+    background-color:transparent !important;
+  }
+  .link-preview > #desc-preview{
   
+  }
+
+  .link-preview > h4 {
+    margin-top: 1.5rem;
+    font-weight: bold;
+  }
   #frame {
     width: 95%;
     min-width: 360px;
@@ -107,7 +149,7 @@
     }
   }
   #frame #sidepanel #profile.expanded .wrap {
-    height: 260px;
+    height:185px;
     line-height: initial;
   }
   #frame #sidepanel #profile.expanded .wrap p {

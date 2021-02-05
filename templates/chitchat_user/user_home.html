@@ -59,8 +59,7 @@
     <div id="frame">
       <div id="sidepanel">
         <div id="profile">
-          <div class="wrap">
-           
+          <div class="wrap">         
             {% if user_details.ImageURL == "" or status == 'new' %}
             <img
               id="profile-img" 
@@ -175,7 +174,6 @@
           </button></a>
         </div>
       </div>
-      
       <div class="content" id="head">
          
         </div> 
@@ -184,8 +182,6 @@
     <script src="{% static 'chitchat_user/js/chat_room.js' %}"></script>
     <script src="{% static 'chitchat_user/js/reconnecting_websocket.js' %}"></script>
     <script>
-
-
 
     function updateProgress(evt){
       console.log('function 1');
@@ -401,34 +397,42 @@ function peerChat() {
               
               function isUrlValid(userInput) {
               var res = userInput.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g); 
-        if (res == null) {
+        if (res == null || msg.length >= 100) {
           type ='text'
           return false;
             
         }
-        else{     
+        else  if (res != null && msg.length <= 100){     
 
-          $("#msg-preview").show();   
+          // $("#msg-preview").show();   
           type = 'url'
           
-              $.ajax({
-                  url: "https://api.linkpreview.net",
-                  dataType: 'jsonp',
-                  data: {q: msg, key: 'e8b609c67fd94317b0e5fb27401b479c'},
-                  success: function (response) {
-                      var data=response;
-              $("#msg-preview").html(` <img style="width:45px;height:40px;" src="${data.image}">
-              <h4 style="font-weight: bold; display:inline-block">${data.title.slice(0,10)}</h4>
-              <i onclick="hidePreview()" style="float:right;" class="fas fa-times-circle"></i> 
-              <p>${data.description.slice(0,80)}...</p>
-              <a href="${data.url}">${data.url}</a>  `);
+        //       $.ajax({
+        //           url: "https://api.linkpreview.net",
+        //           dataType: 'jsonp',
+        //           data: {q: msg, key: 'e8b609c67fd94317b0e5fb27401b479c'},
+        //           success: function (response) {
+        //               var data=response;
+        //               if (data.error == 425){
+        //                 $("#msg-preview").hide();
+        //               }
+        //               else{
+        //       $("#msg-preview").html(` <img style="width:45px;height:40px;" src="${data.image}">
+        //       <h4 style="font-weight: bold; display:inline-block">${data.title.slice(0,10)}</h4>
+        //       <i onclick="hidePreview()" style="float:right;" class="fas fa-times-circle"></i> 
+        //       <p>${data.description.slice(0,80)}...</p>
+        //       <a href="${data.url}">${data.url}</a>  `);
                 
-              
-              console.log(data.image);
-              console.log(data);
-                  }
-              });
-          return true;
+        //               }
+        //       console.log(data.image);
+        //       console.log(data);
+
+        //           },
+        //           error: function (response) {
+        //             console.log("assd");
+        //           }
+        //       });
+        //   return true;
         }
     }
               
@@ -489,38 +493,20 @@ function peerChat() {
               e.preventDefault()
             console.log("***************************",e.target.files[0]);
             let item = e.target.files[0];
-            //trial chunk 
-            var file = item;
-            var chunkSize = 1024 * 1024;
-            var fileSize = file.size;
-            var chunks = Math.ceil(file.size/chunkSize,chunkSize);
-            var chunk = 0;
-
-            console.log('file size..',fileSize);
-            console.log('chunks...',chunks);
-
-            while (chunk < chunks) {
-                var offset = chunk*chunkSize;
-                console.log('current chunk..', chunk);
-                console.log('offset...', chunk*chunkSize);
-                console.log('file blob from offset...', offset)
-                console.log(file.slice(offset,offset+chunkSize));
-                
-                //test data
-          // console.log("####",item);
-            let blob = file.slice(offset,offset+chunkSize);
-              console.log('SSSSS',file.type)
+            console.log("####",item);
+            let blob = item;
+            console.log('SSSSS',blob.type)  
 
             const reader = new FileReader();
             reader.readAsDataURL(blob)
             reader.onload = (e) => {
               base64_data = e.target.result;
-              // arrayBuf = e.target.result;
-              console.log("11111",base64_data);
-                base64_value(base64_data)
+              arrayBuf = e.target.result;
+              console.log("11111",arrayBuf);
+              base64_value(base64_data)
 
             }
-                  type = file.type
+                  type = blob.type
                   const base64_value=(base64_data) => {
                   chatSocket.send(JSON.stringify({
                   'command':'new_message',
@@ -530,11 +516,6 @@ function peerChat() {
 
                 }));
                   }
-                //testend
-                chunk++;
-            }
-            // end trial chunk
-            
               
                 })
        
@@ -570,7 +551,7 @@ function peerChat() {
             var imgTag = document.createElement('img');
             var pTag = document.createElement('p');
             pTag.id ='msgtag'
-            imgTag.src = 'http://emilcarlsson.se/assets/harveyspecter.png'
+            imgTag.src = data.user_image
             pTag.textContent = data.content;
             msgListTag.appendChild(imgTag);
             msgListTag.appendChild(pTag);
@@ -621,15 +602,67 @@ function peerChat() {
           
           else  if (data.msg_type === 'url' ) {
             console.log("Urlll", data.msg_type);
+            msg = data.content
             var msgListTag = document.createElement('li');
             var imgTag = document.createElement('img');
             var urlTag = document.createElement('a');
+            var divPreview = document.createElement('div');
+            var imgPreview = document.createElement('img');
+            var urlPreview =document.createElement('a');
+            var titlePreview = document.createElement('h4');
+            var descPreview = document.createElement('p');
             urlTag.id = 'urlmsg';
+            divPreview.className = 'link-preview'
+            imgPreview.id = 'img-preview'
+            urlPreview.id = 'url-preview'
+            titlePreview.id = 'title-preview'
+            descPreview.id = 'desc-preview'
             imgTag.src = 'http://emilcarlsson.se/assets/harveyspecter.png'
-            urlTag.textContent = data.content;
-            urlTag.href = data.content;
+
+            $.ajax({
+                  url: "https://api.linkpreview.net",
+                  dataType: 'jsonp',
+                  data: {q: msg, key: 'e8b609c67fd94317b0e5fb27401b479c'},
+                  success: function (response) {
+                      var data=response;
+                if (data.error == 425){
+                      urlTag.textContent = msg;
+                      urlTag.href = 'http://' + msg;
+                      msgListTag.appendChild(urlTag);
+                      }
+                else{
+                    title = data.title.slice(0,10)
+                    desc = data.description.slice(0,60)
+                    url = data.url
+                      imgPreview.src = data.image
+                      titlePreview.textContent = title + '...'
+                      descPreview.textContent = desc + '...'
+                      urlPreview.textContent = url;
+                      urlPreview.href = url;
+
             msgListTag.appendChild(imgTag);
-            msgListTag.appendChild(urlTag);            
+            divPreview.appendChild(imgPreview);
+            divPreview.appendChild(titlePreview);
+            divPreview.appendChild(descPreview);
+            divPreview.appendChild(urlPreview);
+            msgListTag.appendChild(divPreview);
+                }
+              console.log(data.image);
+              console.log(data);
+                  }
+              });
+
+            // imgPreview.src = 'http://emilcarlsson.se/assets/harveyspecter.png'
+            // titlePreview.textContent ='TEST sdsd dsdds dsdscds sddsscs'
+            // descPreview.textContent ='test tet test etstesdsds sddscds sdsd sdcsds dsds sd'
+            // urlPreview.textContent = data.content;
+            // urlPreview.href = data.content;
+
+            // urlTag.textContent = data.content;
+            // urlTag.href = data.content;
+            
+        
+            // msgListTag.appendChild(urlTag);            
             document.querySelector('#chat-log').appendChild(msgListTag);
             if(author === username) {
             msgListTag.className = 'replies';
