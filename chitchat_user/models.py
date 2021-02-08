@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
+from datetime import date
 
 User = get_user_model()
 
@@ -11,7 +12,7 @@ class UserDetails(models.Model):
     state = models.CharField(max_length=100,null=True,blank=True)
     district = models.CharField(max_length=100,null=True,blank=True)
     open_chat = models.BooleanField(null=True,blank=True)
-    dob = models.DateField(null=True, blank=True)
+    dob = models.DateField(default=date.today,null=True, blank=True)
     martial_status = models.CharField(max_length=100,null=True,blank=True)
     bio = models.TextField(null=True, blank=True)
     status = models.CharField(max_length=500,null=True,blank=True)
@@ -34,14 +35,8 @@ class Message(models.Model):
     file_uploaded = models.FileField(upload_to="video/",default="")
     file_type = models.CharField(max_length=50,null=True,blank=True)
     room_name = models.CharField(max_length=100,null=True,blank=True)
-    chat_icon = models.ImageField(null=True,blank=True)
-    @property 
-    def ImageURL(self):
-        try:
-            url = self.chat_icon.url
-        except:
-            url = ''
-        return url        
+    chat_icon = models.CharField(max_length=500,null=True,blank=True)
+         
 
     @property
     def File_URL(self):

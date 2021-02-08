@@ -1,0 +1,160 @@
+{% extends 'chitchat_user/base_user.html' %}
+{% load static %}
+{% block heading %} Chat Location Settings {% endblock %}
+
+		{% block body %}
+		<form method="POST"> 
+			{% csrf_token %}
+				<ul class="form">
+                   
+                        <li>   
+                            <select class="dropdown" onchange="disableDistrict()" id="state" name="state" >
+                                <option value="{{user_details.state}}" >{{user_details.state}}</option>
+                                <option value="All">All</option>                                
+                                <option value="Kerala">Kerala</option>                                
+                               </select>    
+                            </li>     
+                        <li>   
+                                <select class="dropdown" id="district" name="district" >
+                                    <option value="{{user_details.district}}" >{{user_details.district}}</option>
+                                    <option value="Trivandrum">Trivandrum</option>
+                                    <option value="Kollam">Kollam</option>
+                                    <option value="Alappuzha">Alappuzha</option>
+                                    <option value="Pathanamthitta">Pathanamthitta</option>
+                                    <option value="Ernakulam">Ernakulam</option>
+                                    <option value="Kottayam">Kottayam</option>
+                                    <option value="Wayanad">Wayanad</option>
+                                    <option value="Idukki">Idukki</option>
+                                    <option value="Kozhikode">Kozhikode </option>    
+                                    <option value="Malappuram">Malappuram</option>
+                                    <option value="Kasargode">Kasargode</option>
+
+                                   </select>    
+                                </li>         
+
+					<div class="p-container">
+								
+								<button type="submit" id="signup_btn"  class="hvr-bounce-to-bottom">Update</button> 								 
+								
+
+							<div class="clear"> </div>
+					</div>
+				</ul>
+			</form>
+			
+	{% endblock %}
+	{%block script %}
+	<script
+    src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+    integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
+    crossorigin="anonymous"
+  ></script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+    integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+    crossorigin="anonymous"
+  ></script>
+
+  <script
+    src="https://code.jquery.com/jquery-3.5.0.min.js"
+    integrity="sha256-xNzN2a4ltkB44Mc/Jz3pT4iU1cmeR0FkXs4pru/JxaQ="
+    crossorigin="anonymous"
+  ></script>
+  
+
+<script type="text/javascript">
+//   $( document ).ready(function() {
+//     $( "#signup_btn" ).click(function() {
+// 		console.log('sucesssssssssssssssss')
+//       var userData = {
+//         csrfmiddlewaretoken: '{{ csrf_token }}',
+// 		first_name: $('#first_name').val(),
+// 		last_name: $('#last_name').val(),
+// 		state:$('#state option:selected').val(),
+// 		district:$('#district option:selected').val(),
+//         username: $('#username').val(),
+//         password: $('#password').val(),
+//         confirm_password: $('#confirm_password').val(),
+// 		open_chat : $("input[name='open_chat']:checked").val()
+// 	  }
+// 	  console.log(userData.state)
+//       if (userData.first_name === '')
+//      {
+//       $('#invalid').html('please enter your first name')
+//      }
+//      else if (userData.last_name === '')
+//      {
+//       $('#invalid').html('please enter your last name')
+// 	 }
+// 	 else if (userData.state === '0')
+//      {
+//       $('#invalid').html('please select your state')
+// 	 }
+// 	 else if (userData.district === '0')
+//      {
+//       $('#invalid').html('please select your district')
+//      }
+//       else if (userData.username === '')
+//      {
+//       $('#invalid').html('please enter username')
+//      }
+          
+//      else if (userData.password === '')
+//      {
+//       $('#invalid').html('please enter a password')
+//      }
+//      else if (userData.confirm_password === '')
+//      {
+//       $('#invalid').html('please confirm your password')
+//      }
+     
+// else{
+//       $.ajax({
+//           url : '/user-signup/',
+//           type: "POST",
+//           data : userData,
+//           dataType : "json",
+//           success: function( data ){
+// 			if(data == 'valid')
+//             window.location.replace("/")
+//             if(data == 'invalid'){
+//               $('#invalid').html('Passwords not Match')
+//               $('#password1').val('')
+//               $('#password2').val('')
+//             }
+//             if (data == 'usernamemismatch'){
+//               $('#invalid').html('Username already taken')
+//               $('#username').val('')
+//               $('#password1').val('')
+//               $('#password2').val('')
+//             }
+
+//           }
+//       });
+
+//      }
+     
+      
+//     });
+    
+//   });
+$( document ).ready(function() {
+   let state = $('#state option:selected').val()
+     if (state == 'All' ){
+        $('#district').prop('disabled',true);
+       
+}
+});
+
+function disableDistrict(){
+    let state = $('#state option:selected').val()
+    if (state == 'All' ){
+        $('#district').prop('disabled',true);
+       
+}
+else{
+    $('#district').prop('disabled',false);
+}
+}
+</script>
+{% endblock %}

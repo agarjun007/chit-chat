@@ -46,7 +46,6 @@
                                 <div class="text-left">
                                     <label for="propic">Show profile picture &nbsp;</label>
                                     <input type="radio" id="propic_everyone" name="propic" checked value="Everyone">Everyone&nbsp;</input>
-                                    <input type="radio" id="propic_friends"  name="propic" value="Friends">Friends&nbsp;</input>
                                     <input type="radio" id="propic_nobody"  name="propic" value="Nobody">Nobody&nbsp;</input>
                                 </div>
                             </div>
@@ -60,7 +59,6 @@
                                 <div class="text-left">
                                     <label for="fullName">Share my Profile &nbsp;</label>
                                     <input type="radio" id="profile_everyone" name="profile" value="Everyone" checked>Everyone&nbsp;</input>
-                                    <input type="radio" id="profile_friends" name="profile" value="Friends">Friends&nbsp;</input>
                                     <input type="radio" id="profile_nobody" name="profile" value="Nobody">Nobody&nbsp;</input>
                                 </div>
                             </div>
@@ -72,7 +70,6 @@
                                 <div class="text-left">
                                     <label for="mobile">Share my Mobile number &nbsp;</label>
                                     <input type="radio" id="mobile_everyone" name="mobile" value="Everyone" checked>Everyone&nbsp;</input>
-                                    <input type="radio" id="mobile_friends" name="mobile"value="Friends">Friends&nbsp;</input>
                                     <input type="radio" id="mobile_nobody" name="mobile"value="Nobody">Nobody&nbsp;</input>
                                 </div>
                             </div>
@@ -99,7 +96,8 @@
                         <div class="row gutters">
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                                 <div class="text-right">
-                                    <button type="submit" id="submitbtn" name="submitbtn" class="btn btn-primary">Update</button>
+                                    <button type="submit" id="submitbtn" name="submitbtn" class="btn btn-primary">Update</button><br>
+                                    <a href="/user-home/">Chat Home</a>
                                 </div>
                             </div>
                         </div>
@@ -121,50 +119,43 @@
         crossorigin="anonymous"></script>  
   
         <script>
-            var propicValue = $('#propic-value').val()
+            $( document ).ready(function() {
+            var propicValue ='{{user_details.show_propic}}'
             console.log(propicValue);
             if(propicValue === 'Everyone' ){
             document.getElementById("propic_everyone").checked = true;
 
             }
-            else if(propicValue === 'Friends' ){
-            document.getElementById("propic_friends").checked = true;
-
-            }
-            else if(propicValue === 'nobody' ){
+            
+            else if(propicValue === 'Nobody' ){
             document.getElementById("propic_nobody").checked = true;
 
             }
 
-            var profileValue = $('#profile-value').val()
+            var profileValue = '{{user_details.show_profile}}'
             console.log(profileValue);
             if(profileValue === 'Everyone' ){
             document.getElementById("profile_everyone").checked = true;
 
             }
-            else if(profileValue === 'Friends' ){
-            document.getElementById("profile_friends").checked = true;
-
-            }
-            else if(profileValue === 'nobody' ){
+            
+            else if(profileValue === 'Nobody' ){
             document.getElementById("profile_nobody").checked = true;
 
             }
 
-            var mobileValue = $('#mobile-value').val()
+            var mobileValue = '{{user_details.show_mobile}}'
             console.log(mobileValue);
             if(mobileValue === 'Everyone' ){
             document.getElementById("mobile_everyone").checked = true;
 
             }
-            else if(mobileValue === 'Friends' ){
-            document.getElementById("mobile_friends").checked = true;
-
-            }
-            else if(mobileValue === 'nobody' ){
+           
+            else if(mobileValue === 'Nobody' ){
             document.getElementById("mobile_nobody").checked = true;
 
             }
+        });
         </script>
 </body>
 </html>

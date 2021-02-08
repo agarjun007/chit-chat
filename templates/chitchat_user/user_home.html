@@ -70,8 +70,8 @@
             {%else%}
             <img
               id="profile-img"
-              src="{{user_details.ImageURL}}"
-              class="online" style=" height: 3rem;"
+              src="{{user_details.ImageURL}}" style=" height: 3rem;"
+              class="online" 
               alt=""
             />
             {% endif %}
@@ -128,7 +128,7 @@
             {% for user_details in users_details %}
             <li id="contact{{user_details.id}}" onclick="chat('{{user_details.id}}')" class="contact">
               <div class="wrap">
-                <span class="contact-status online"></span>
+                <!-- <span class="contact-status online"></span> -->
                 {%if user_details.ImageURL == '' %}
                 <img id="propic{{user_details.id}}" src="https://i.pinimg.com/originals/51/f6/fb/51f6fb256629fc755b8870c801092942.png" alt="" />
                 {%else%}
@@ -163,10 +163,10 @@
         </div>
         <div id="bottom-bar">
           
-          <!-- <button id="addcontact">
-            <i class="fa fa-user-plus fa-fw" aria-hidden="true"></i>
-            <span>Add contact</span>
-          </button> -->
+          <a href="/chat-location/"><button id="addcontact">
+            <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+            <span>Chat location</span>
+          </button></a>
 
         <a href="/user-settings/"><button  id="settings">
             <i  class="fa fa-cog fa-fw" aria-hidden="true"></i>
@@ -265,13 +265,15 @@ function chat(user_id){
     success: function(data){
       roomName = data.room_name
       username = JSON.parse(data.user)[0].fields.username
+      userId = JSON.parse(data.user_details)[0].pk
+      console.log('useriddd',JSON.parse(data.user)[0].pk);
       propic = data.imageurl
       console.log(propic);
       console.log(data);
       
       $('#head').html(`<div class="contact-profile">
        
-        <img src="${propic == "" ? 'https://i.pinimg.com/originals/51/f6/fb/51f6fb256629fc755b8870c801092942.png' : propic}" alt="" />
+        <img onclick="profileView(${userId})" src="${propic == "" ? 'https://i.pinimg.com/originals/51/f6/fb/51f6fb256629fc755b8870c801092942.png' : propic}" alt="" />
      
           <p id="user-name">${username}</p>
           <div class="social-media">
@@ -337,6 +339,23 @@ function chat(user_id){
   })
   
 }
+function profileView(user_id)
+{
+
+  $.ajax({
+    url:'/user-profile-view/'+user_id,
+    type:"GET",
+    dataType:"json",
+    success: function(data){
+      if (data == 'success'){
+        window.location.replace("/user-profile-show/"+user_id)
+      }
+      else if(data == 'failed'){
+        alert('Profile is Hidden from public')
+      }
+    }
+  })
+}
 function showImage(){
   $("#image").click();
 }
@@ -392,6 +411,11 @@ function peerChat() {
             document.querySelector('#chat-message-input').onchange = function(e) {
               let msg = $('#chat-message-input').val()
               console.log(msg);
+              if (msg.length >= 500)
+              {
+                alert('Character limit exceeds..!!!')
+              }
+              else{
               isUrlValid(msg)
 
               
@@ -436,9 +460,9 @@ function peerChat() {
         }
     }
               
-            
+  } 
           };
-            
+
 
 
           
@@ -494,6 +518,10 @@ function peerChat() {
             console.log("***************************",e.target.files[0]);
             let item = e.target.files[0];
             console.log("####",item);
+            if (item.size > 10000000){
+              alert('please select a file within 10MB')
+            }
+        else{
             let blob = item;
             console.log('SSSSS',blob.type)  
 
@@ -517,8 +545,9 @@ function peerChat() {
                 }));
                   }
               
+                }       
                 })
-       
+          
 
         function fetchMessages() {
           chatSocket.send(JSON.stringify({'command':'fetch_messages'}));
@@ -535,7 +564,12 @@ function peerChat() {
             var imgTag = document.createElement('img');
             var imgmsgTag = document.createElement('img');
             imgmsgTag.id = 'imgmsg';
-            imgTag.src = 'http://emilcarlsson.se/assets/harveyspecter.png'
+            if (data.user_image === ''){
+            imgTag.src = 'https://i.pinimg.com/originals/51/f6/fb/51f6fb256629fc755b8870c801092942.png'
+            }
+            else{
+            imgTag.src = data.user_image
+            }             
             imgmsgTag.src = data.content;
             msgListTag.appendChild(imgTag);
             msgListTag.appendChild(imgmsgTag);            
@@ -551,7 +585,13 @@ function peerChat() {
             var imgTag = document.createElement('img');
             var pTag = document.createElement('p');
             pTag.id ='msgtag'
+            if (data.user_image === ''){
+            imgTag.src = 'https://i.pinimg.com/originals/51/f6/fb/51f6fb256629fc755b8870c801092942.png'
+
+            }
+            else{
             imgTag.src = data.user_image
+            }
             pTag.textContent = data.content;
             msgListTag.appendChild(imgTag);
             msgListTag.appendChild(pTag);
@@ -569,7 +609,12 @@ function peerChat() {
             var videomsgTag = document.createElement('video');
             videomsgTag.id = 'videomsg';
             videomsgTag.controls = true;
-            imgTag.src = 'http://emilcarlsson.se/assets/harveyspecter.png'
+            if (data.user_image === ''){
+            imgTag.src = 'https://i.pinimg.com/originals/51/f6/fb/51f6fb256629fc755b8870c801092942.png'
+            }
+            else{
+            imgTag.src = data.user_image
+            }            
             videomsgTag.src = data.content;
             msgListTag.appendChild(imgTag);
             msgListTag.appendChild(videomsgTag);            
@@ -587,8 +632,13 @@ function peerChat() {
             var audiomsgTag = document.createElement('audio');
             audiomsgTag.id = 'audiomsg';
             audiomsgTag.controls = true;
-            imgTag.src = 'http://emilcarlsson.se/assets/harveyspecter.png'
             audiomsgTag.src = data.content;
+            if (data.user_image === ''){
+            imgTag.src = 'https://i.pinimg.com/originals/51/f6/fb/51f6fb256629fc755b8870c801092942.png'
+            }
+            else{
+            imgTag.src = data.user_image
+            } 
             msgListTag.appendChild(imgTag);
             msgListTag.appendChild(audiomsgTag);            
             document.querySelector('#chat-log').appendChild(msgListTag);
@@ -617,8 +667,12 @@ function peerChat() {
             urlPreview.id = 'url-preview'
             titlePreview.id = 'title-preview'
             descPreview.id = 'desc-preview'
-            imgTag.src = 'http://emilcarlsson.se/assets/harveyspecter.png'
-
+            if (data.user_image === ''){
+            imgTag.src = 'https://i.pinimg.com/originals/51/f6/fb/51f6fb256629fc755b8870c801092942.png'
+            }
+            else{
+            imgTag.src = data.user_image
+            } 
             $.ajax({
                   url: "https://api.linkpreview.net",
                   dataType: 'jsonp',
@@ -628,6 +682,7 @@ function peerChat() {
                 if (data.error == 425){
                       urlTag.textContent = msg;
                       urlTag.href = 'http://' + msg;
+                      urlTag.target = '_blank';
                       msgListTag.appendChild(urlTag);
                       }
                 else{
@@ -639,6 +694,7 @@ function peerChat() {
                       descPreview.textContent = desc + '...'
                       urlPreview.textContent = url;
                       urlPreview.href = url;
+                      urlPreview.target = '_blank';
 
             msgListTag.appendChild(imgTag);
             divPreview.appendChild(imgPreview);

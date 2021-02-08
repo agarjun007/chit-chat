@@ -30,6 +30,7 @@ class ChatConsumer(WebsocketConsumer):
 
     def new_message(self, data):
         author = data['from']
+        logged_user =self.scope["user"]
         print('typeeeeee',data['msg_type'])
         file_type = data['msg_type'][:5]
         print(file_type)
@@ -46,14 +47,16 @@ class ChatConsumer(WebsocketConsumer):
             content_msg = ""
             print('fileeeeeeee',file_decoded)
             msg_type = file_type
+            userdetail = UserDetails.objects.get(user = logged_user )
             author_user = User.objects.filter(username = author)[0]
-            message = Message.objects.create(author = author_user,content=content_msg,file_uploaded=file_decoded,file_type=file_type,room_name=self.room_name) 
+            message = Message.objects.create(author = author_user,chat_icon = userdetail.ImageURL,content=content_msg,file_uploaded=file_decoded,file_type=file_type,room_name=self.room_name) 
 
         else:
             content_msg = data['message']
             msg_type = data['msg_type']
+            userdetail = UserDetails.objects.get(user = logged_user )
             author_user = User.objects.filter(username = author)[0]
-            message = Message.objects.create(author = author_user,content=content_msg,file_type=msg_type,room_name=self.room_name)   
+            message = Message.objects.create(author = author_user,chat_icon = userdetail.ImageURL,content=content_msg,file_type=msg_type,room_name=self.room_name)   
      
         # print('base644444',data['message'])
         # msg_type = data['msg_type']
@@ -72,24 +75,23 @@ class ChatConsumer(WebsocketConsumer):
 
 
     def message_to_json(self,message):
-        logged_user =self.scope["user"]
-        userdetail = UserDetails.objects.get(user = logged_user )
-        print('imageeeeee',userdetail.ImageURL)
         if message.content == "":
+            print( message.chat_icon)
             return{
                 'author': message.author.username,
                 'content':message.file_uploaded.url,
                 'timestamp': str(message.timestamp),
                 'msg_type' : message.file_type,
-                'user_image' : userdetail.ImageURL
+                'user_image' : message.chat_icon
             }
         else:
+            print( message.chat_icon)
             return{
             'author': message.author.username,
             'content':message.content,
             'timestamp': str(message.timestamp),
             'msg_type' : message.file_type,
-            'user_image' : userdetail.ImageURL
+            'user_image' : message.chat_icon
         }
                     
 

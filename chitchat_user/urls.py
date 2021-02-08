@@ -13,6 +13,8 @@ urlpatterns = [
     path('user-profile-edit/',views.edit_profile,name='user-profile-edit'),
     path('user-profile-update/',views.update_profile,name='user-profile-update'),
     path('user-settings/',views.user_settings,name='user_settings'),
-    path('user-profile-view/<int:id>',views.user_profile_view ,name='user-profile-view'),
+    path('chat-location/',views.chat_location,name='chat_location'),
+    path('user-profile-view/<int:user_id>',views.user_profile_view ,name='user-profile-view'),
+    path('user-profile-show/<int:user_id>',views.user_profile_show ,name='user-profile-show'),
     path('user-chat-details/',views.user_chat_details,name='user-chat-details'),
 ]

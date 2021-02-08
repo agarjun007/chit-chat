@@ -84,6 +84,18 @@
     background-color:#bcc4d4b8;
     
   }
+  .sent > .link-preview {
+    float:left;
+    height: 10rem;
+    width: 12rem;
+    color: black!important;
+    background-color:#bcc4d4b8;
+    
+  }
+  .sent > .link-preview p {
+    color: black!important;
+    
+  }
   .link-preview > img{
     border-radius: 0 !important;
     width: 100px!important;
@@ -665,16 +677,17 @@
   #frame .content .messages ul li.sent img {
     margin: 6px 8px 0 0;
   }
-  #frame .content .messages ul li.sent p #imgmsg {
+  #frame .content .messages ul li.sent p {
     background: #435f7a;
     color: #f5f5f5;
+    float:left
   }
   #frame .content .messages ul li.replies img {
     float: right;
     margin: 6px 0 0 8px;
   }
   #frame .content .messages ul li.replies p {
-    background: #f5f5f5;
+    background: #97e5a4;
     float: right;
   }
   #frame .content .messages ul li img {
@@ -716,8 +729,8 @@
     font-family: "proxima-nova",  "Source Sans Pro", sans-serif;
     float: left;
     border: none;
-    width: calc(100% - 90px);
-    padding: 11px 32px 10px 8px;
+    width: calc(100% - 51px);
+    padding: 16px 32px 10px 8px;
     font-size: 0.8em;
     color: #000000;
   }

@@ -18,9 +18,9 @@
                     <div class="col-md-4">
                         <div class="profile-img">
                            
-                                {%if user_details.ImageURL == '' %}
+                                {%if user_details.ImageURL == '' or user_details.show_propic == 'Nobody' %}
                             <img id="profile-image"  src="https://i.pinimg.com/originals/51/f6/fb/51f6fb256629fc755b8870c801092942.png" alt="" style="height: 200px; width: 150px; border-radius: 50%;"/>
-                            {% else %}
+                            {% elif user_details.show_propic == 'Everyone' %}
                             <img id="profile-image"  src="{{user_details.ImageURL}}" alt="" style="height: 200px; width: 150px;border-radius: 50%;"/>
                             {% endif %}
                         
@@ -49,9 +49,9 @@
                             </ul>
                         </div>
                     </div>
-                    <!-- <div class="col-md-2">
-                        <a href="/user-profile-edit/"><input class="profile-edit-btn" name="btnAddMore" value="Edit Profile" disabled /></a>
-                    </div> -->
+                    <div class="col-md-2">
+                        <a href="/user-home/"><input class="profile-edit-btn" name="btnAddMore" value="Chat Home" disabled /></a>
+                    </div>
                 </div>
                 <div class="row">
                     <div class="col-md-4">
@@ -98,9 +98,16 @@
                                             <div class="col-md-6">
                                                 <label>Mobile Number</label>
                                             </div>
+                                            
                                             <div class="col-md-6">
-                                                <p>{{user_details.mobile_number}}</p>
-                                            </div>
+                                    {% if user_details.show_mobile == 'Everyone' %}                                            
+                                                <p>{{user_details.mobile_number}}</p>                                            
+                                        {%else%}                                        
+                                        <p>Hidden</p>                                       
+                                        
+                                        {%endif%}
+                                    </div>
+                                        
                                         </div>
                                         <div class="row">
                                             <div class="col-md-6">

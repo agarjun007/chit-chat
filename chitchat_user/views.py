@@ -18,6 +18,7 @@ from django.db.models import Q
 from django.contrib import messages
 from django.core import serializers
 import uuid 
+from django.contrib import messages
 
 
 def user_login(request):
@@ -167,13 +168,19 @@ def user_home(request):
         users = User.objects.all()
         if UserDetails.objects.filter(user=request.user).exists():
             user_details = UserDetails.objects.get(user=request.user)
-            users_details = UserDetails.objects.filter(~Q(user=request.user))
+            if user_details.state == 'All':
+                users_details = UserDetails.objects.filter(~Q(user=request.user)) 
+            else:
+                users_details = UserDetails.objects.filter(~Q(user=request.user),state=user_details.state,
+                                                         district= user_details.district,open_chat=1 ) 
             context= {'users': users, 'user_details': user_details,'users_details': users_details }               
             return render(request, 'chitchat_user/user_home.html',context )
         else:
             user_details = UserDetails.objects.create(user=request.user, open_chat=1, show_propic='Everyone',
-                                                      show_profile='Everyone', show_mobile='Everyone')
-            users_details = UserDetails.objects.filter(~Q(user=request.user))
+                                                      show_profile='Everyone', show_mobile='Everyone',
+                                                      state='kerala', district= 'Kozhikode')
+            users_details = UserDetails.objects.filter(~Q(user=request.user),state=user_details.state,
+                                                        district= user_details.district,open_chat=1)
             user_details = UserDetails.objects.get(user=request.user)
             context= {'users': users, 'user_details': user_details,'users_details': users_details,'status': 'new' }               
             return render(request, 'chitchat_user/user_home.html',context )
@@ -290,8 +297,11 @@ def user_settings(request):
 
         if request.method == 'POST':
             user_details.show_propic = request.POST['propic']
+            print(request.POST['propic'])
             user_details.show_profile = request.POST['profile']
+            print(request.POST['profile'])
             user_details.show_mobile = request.POST['mobile']
+            print(request.POST['mobile'])
             open_chat = request.POST['open_chat']
 
             if open_chat == 'yes':
@@ -309,19 +319,44 @@ def user_settings(request):
         return redirect(user_login)
 
 
-def peer_chat(request):
+def chat_location(request):
     if request.user.is_authenticated:
-        pass
+        user_details = UserDetails.objects.get(user=request.user)
+        if request.method == 'POST':
+            user_details.state = request.POST['state']
+            if user_details.state != 'All':
+                user_details.district = request.POST['district']
+            else:
+                user_details.district = ''
+            user_details.save()
+            return redirect(user_home)
+        else:
+            context={'user_details':user_details}
+            return render (request,'chitchat_user/chat_location.html', context)   
+    else:     
+        return redirect(user_login)
 
 
-def user_profile_view(request, id):
+def user_profile_view(request, user_id):
     if request.user.is_authenticated:
-        user_details = UserDetails.objects.get(id=id)
-        if user_details.open_chat == 1:
+        user_details = UserDetails.objects.get(id=user_id)
+        if user_details.show_profile == 'Everyone':
+            return JsonResponse('success',safe=False)
+        else:
+            return JsonResponse('failed',safe=False)
+    else:
+        return redirect(user_login)        
+
+def user_profile_show(request,user_id):
+    if request.user.is_authenticated:
+        user_details = UserDetails.objects.get(id=user_id)
+        if user_details.show_profile == 'Everyone':
             context = {'user_details': user_details}
             return render(request, 'chitchat_user/user_profile_view.html', context)
         else:
-            pass
+            return redirect(user_home) 
+    else:
+        return redirect(user_login)     
 
 
 def user_chat_details(request):

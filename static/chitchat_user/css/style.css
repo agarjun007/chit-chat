@@ -212,7 +212,7 @@ input[type="text"],
 /*--/logo--*/
 .login-form {
   background: #1c2a4a;
-  min-height: 670px;
+  min-height: 500px;
   width: 30%;
   margin: 8% auto 4% auto;
   position: relative;
